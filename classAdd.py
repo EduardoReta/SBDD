@@ -11,7 +11,7 @@ class Add:
         self.cursor = cursor
         self.frame = Frame(self.master)
         self.master.title("Add Window")
-        self.master.geometry("800x800")
+        self.master.geometry("400x400")
 
         self.console = Console()
 
@@ -22,13 +22,9 @@ class Add:
         self.autor_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
 
-
-
-
     def add_autor_window(self):
         self.add_Window = tk.Toplevel(self.master)
         self.autor = Autor(self.add_Window, self.master)
-
 
 
 class Autor:
@@ -36,7 +32,7 @@ class Autor:
         self.master = master
         self.cursor = cursor
         self.frame = Frame(self.master)
-        self.master.title("Add Window")
+        self.master.title("Add Autors")
         self.master.geometry("800x800")
 
 
