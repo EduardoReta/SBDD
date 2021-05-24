@@ -87,10 +87,6 @@ class Autor:
                 if re.search('tbl\w+', y):
                     self.clean_row_list.append(y)
 
-        # if self.table_of_insert_data_value.get() in self.clean_row_list:
-
-            # if self.table_of_insert_data_value.get() == "tblAUTOR":
-
         self.cursor.execute(f"SELECT * FROM tblAUTOR")
         for column in self.cursor.description:
             self.text_box.insert(END, str(column[0]) + " | ")
@@ -130,9 +126,6 @@ class Autor:
         self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
 
         self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")               
-
-        # else:
-        #     self.text_box.insert(END, "No esta")
 
 
     def insert_value_query(self):
@@ -197,7 +190,6 @@ class Autor:
 
     # Insertar "DEFAULT" como valor para dar valor nulo a columna dada 
     def null_value(self):
-        # self.console.print(f"columna: {self.clean_row_list[self.contador]}", style="bold red")
         self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador] )
         self.list_of_values_to_insert.append("DEFAULT")
         self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
