@@ -6,6 +6,9 @@ from rich.console import Console
 from rich import style
 
 class Add:
+
+    # Este es el ejemplo inicial.
+    
     def __init__(self, master, cursor):
         self.master = master
         self.cursor = cursor
