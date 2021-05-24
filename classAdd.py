@@ -280,11 +280,6 @@ class Prestamos:
         global list_of_values_to_insert
         self.list_of_values_to_insert = []
 
-        # Le asignamos el siguiente ID_PRESTAMO que este disponible
-        # self.cursor.execute("SELECT TOP 1 ID_PRESTAMO FROM tblPRESTAMOS ORDER BY ID_PRESTAMO DESC;")
-        # self.value_returned = [row for row in self.cursor]
-        # self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
-
         self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")  
 
 
@@ -354,9 +349,6 @@ class Prestamos:
             self.contador = 1
 
         else:
-            # FIXME: Mandar mensaje si se inserto el ultimo valor de la tabla
-            # NOTE: No es necesario avisar ya que cuando se inserte el ultimo valor, se cambiara
-            #       el nombre del Label por el de la primera columna.
             self.number_of_column_to_insert += 1
             self.contador = self.contador + 1
             self.insert_value.delete(0, 'end')
