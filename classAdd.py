@@ -39,12 +39,6 @@ class Autor:
         self.master.geometry("800x800")
         self.console = Console()
 
-
-        self.test_button = Button(self.master, text="ver tabla", command=self.show_table)
-        self.test_button.pack()
-
-
-
         self.label1 = Label(self.master, text="Insertar valor:")
         self.label1.pack()
 
@@ -55,7 +49,7 @@ class Autor:
         self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
         self.execute_insert.pack()
 
-        self.null_button = Button(self.master, text="Sin Va lor", command=self.null_value)#, self. )
+        self.null_button = Button(self.master, text="Sin Valor", command=self.null_value)#, self. )
         self.null_button.pack()        
 
         self.text_box = Text(self.master, width=500, height=500)
@@ -207,3 +201,5 @@ class Prestamos:
         self.frame = Frame(self.master)
         self.master.title("Agregar Prestamos")
         self.master.geometry("800x800")
+
+
