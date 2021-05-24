@@ -28,7 +28,6 @@ class Add:
         self.add_Window = tk.Toplevel(self.master)
         self.autor = Autor(self.add_Window, self.cursor)
 
-
 class Autor:
     def __init__(self, master, cursor):
         self.cursor = cursor
@@ -36,18 +35,13 @@ class Autor:
         self.frame = Frame(self.master)
         self.master.title("Add Autors")
         self.master.geometry("800x800")
-
         self.console = Console()
 
-        self.label0 = Label(self.master, text="Insertar en tabla:")
-        self.label0.pack()
-        
-        self.table_of_insert_data_value = StringVar()
-        self.insert_register_to_table = Entry(self.master, textvariable=self.table_of_insert_data_value)
-        self.insert_register_to_table.pack()
 
-        self.test_button = Button(self.master, text="Aceptar", command=self.show_table)
+        self.test_button = Button(self.master, text="ver tabla", command=self.show_table)
         self.test_button.pack()
+
+
 
         self.label1 = Label(self.master, text="Insertar valor:")
         self.label1.pack()
@@ -70,8 +64,11 @@ class Autor:
 
         self.number_of_column_to_insert = 1
 
+        # Mostrar tabla automaticamente cuando se abra la ventana de insertar autor.
+        self.show_table()
 
-    def show_table(self) -> None:
+
+    def show_table(self) -> str:
         self.text_box.delete(1.0, END)
 
         # Obtenemos el numero de columnas de la tabla a la que se desea agregar el registro para
@@ -89,53 +86,52 @@ class Autor:
                 if re.search('tbl\w+', y):
                     self.clean_row_list.append(y)
 
-        if self.table_of_insert_data_value.get() in self.clean_row_list:
+        # if self.table_of_insert_data_value.get() in self.clean_row_list:
 
-            if self.table_of_insert_data_value.get() == "tblAUTOR":
+            # if self.table_of_insert_data_value.get() == "tblAUTOR":
+
+        self.cursor.execute(f"SELECT * FROM tblAUTOR")
+        for column in self.cursor.description:
+            self.text_box.insert(END, str(column[0]) + " | ")
+
+        self.row_to_list = [row for row in self.cursor]
+
+        for item in self.row_to_list:
+            try:
+                self.text_box.insert(END, "\n"+str(item)) 
+            except Exception as e:
+                print(str(e))
 
 
-                self.cursor.execute(f"SELECT * FROM {self.table_of_insert_data_value.get()}")
-                for column in self.cursor.description:
-                    self.text_box.insert(END, str(column[0]) + " | ")
+        # Obtener nombres de columnas
+        self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblAUTOR'")
+        self.row_to_list = [row for row in self.cursor]
+        self.clean_row_list = []
+        for item in self.row_to_list:
+            self.clean_row_list.append(item[3])
 
-                self.row_to_list = [row for row in self.cursor]
+        # Numero de columnas
+        global quantity_columns
+        self.quantity_columns = len(self.clean_row_list) - 1
 
-                for item in self.row_to_list:
-                    try:
-                        self.text_box.insert(END, "\n"+str(item)) 
-                    except Exception as e:
-                        print(str(e))
+        # Almacenar la columna en la que se va a insertar el valor
+        global list_of_column_to_insert_value
+        self.list_of_column_to_insert_value = []
+        self.list_of_column_to_insert_value.append("ID_AUTOR")
 
+        # Almacenan los valores a insertar en la tabla
+        global list_of_values_to_insert
+        self.list_of_values_to_insert = []
 
-                # Obtener nombres de columnas
-                self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{str(self.table_of_insert_data_value.get())}'")
-                self.row_to_list = [row for row in self.cursor]
-                self.clean_row_list = []
-                for item in self.row_to_list:
-                    self.clean_row_list.append(item[3])
+        # Le asignamos el siguiente ID_AUTOR que este disponible
+        self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
+        self.value_returned = [row for row in self.cursor]
+        self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
 
-                # Numero de columnas
-                global quantity_columns
-                self.quantity_columns = len(self.clean_row_list) - 1
+        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")               
 
-                # Almacenar la columna en la que se va a insertar el valor
-                global list_of_column_to_insert_value
-                self.list_of_column_to_insert_value = []
-                self.list_of_column_to_insert_value.append("ID_AUTOR")
-
-                # Almacenan los valores a insertar en la tabla
-                global list_of_values_to_insert
-                self.list_of_values_to_insert = []
-
-                # Le asignamos el siguiente ID_AUTOR que este disponible
-                self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
-                self.value_returned = [row for row in self.cursor]
-                self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
-
-                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")               
-
-        else:
-            self.text_box.insert(END, "No esta")
+        # else:
+        #     self.text_box.insert(END, "No esta")
 
 
     def insert_value_query(self):
@@ -166,12 +162,12 @@ class Autor:
                 #   self.list_of_column_to_insert_value = ['ID_AUTOR', 'NOMBRE', 'APELLIDO_PAT', 'APELLIDO_MAT'] Esto no -> , 'DIA_PUBLICACION', 'MES_PUBLICACION', 'AÑO_PUBLICACION']
                 #   self.list_of_values_to_insert) = [valor0, valor1, valor2, valor3]  Esto no -> , valor4, valor5, valor6]
 
-                self.cursor.execute(f"INSERT INTO {str(self.table_of_insert_data_value.get())} ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}')")
+                self.cursor.execute(f"INSERT INTO tblAUTOR ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}')")
                 self.cursor.commit()
     
                 # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
                 self.text_box.delete(1.0, END)
-                self.cursor.execute(f"SELECT * FROM {self.table_of_insert_data_value.get()}")
+                self.cursor.execute(f"SELECT * FROM tblAUTOR")
                 for column in self.cursor.description:
                     self.text_box.insert(END, str(column[0]) + " | ")
 
