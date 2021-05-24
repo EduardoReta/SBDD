@@ -13,20 +13,22 @@ class Add:
         self.master.title("Add Window")
         self.master.geometry("400x400")
 
-
-
         # self.search_button = Button(self.master, text="Search", command=self.show_window)
         # self.search_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
         self.autor_button = Button(self.master, text="Autor", command=self.add_autor_window)
-        self.autor_button.place(relx=0.5, rely=0.3, anchor=CENTER)
+        self.autor_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-        self.autor_button = Button(self.master, text="Autor", command=self.add_autor_window)
-        self.autor_button.place(relx=0.5, rely=0.3, anchor=CENTER)
+        self.donations_button = Button(self.master, text="Donacion", command=self.add_donation_window)
+        self.donations_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
     def add_autor_window(self):
-        self.add_Window = tk.Toplevel(self.master)
-        self.autor = Autor(self.add_Window, self.cursor)
+        self.add_autor = tk.Toplevel(self.master)
+        self.autor = Autor(self.add_autor, self.cursor)
+
+    def add_donation_window(self):
+        self.add_donation = tk.Toplevel(self.master)
+        self.donation = Donacion(self.add_autor_window, self.cursor)
 
 class Autor:
     def __init__(self, master, cursor):
@@ -75,7 +77,6 @@ class Autor:
         # cambiar dinamicamente el numero de widgets "Entry" (entrada texto) de acuerdo
         # a la tabla seleccionada
         self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'tbl%'")
-        
         self.row_to_list = [row for row in self.cursor]
 
         # Lista con el nombre de las puras tablas
