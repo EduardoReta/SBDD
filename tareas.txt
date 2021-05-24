@@ -1,0 +1,7 @@
+Formas de Agregar:
+    - [x] Agregar registro a tabla
+        - [x] Permitir agregar cuantos registros se deseen
+        - [ ] Sacar mensaje si la columna esta duplicada
+    - [x] Agregar columna a tabla
+        - [x] Sacar mensaje si la columna esta duplicada
+    - [ ] Agregar tabla

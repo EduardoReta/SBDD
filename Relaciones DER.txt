@@ -1,0 +1,14 @@
+tblEmpleados     : 1 to 1    : catTurnos
+catSecciones     : 1 to 1    : tblLibro
+catLibrosStock   : Many to 1 : tblLibro
+catPuestoL       : 1 to 1    : tblEmpleados
+catIdioma        : 1 to 1    : tblLibro
+catGenero        : Many to 1 : tblLibro
+catEditorial     : 1 to 1    : tblLibro
+catTipoLibro     : 1 to 1    : tblLibro
+catLibroPrestamo : 1 to 1    : tblLibro
+catLibroPrestamo : 1 to 1    : tblPrestamos
+catLibroPrestamo : 1 to 1    : tblMultas
+catLibroPrestamo : 1 to 1    : tblUsuarios
+catLibro-Autor   : 1 to Many : tblAutor
+catLibro-Autor   : 1 to Many : tblLibro
