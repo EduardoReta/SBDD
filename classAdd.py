@@ -19,23 +19,23 @@ class Add:
         self.autor_button = Button(self.master, text="Autor", command=self.add_autor_window)
         self.autor_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-        self.donations_button = Button(self.master, text="Donacion", command=self.add_donation_window)
+        self.donations_button = Button(self.master, text="Prestamos", command=self.add_lending_window)
         self.donations_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
     def add_autor_window(self):
         self.add_autor = tk.Toplevel(self.master)
         self.autor = Autor(self.add_autor, self.cursor)
 
-    def add_donation_window(self):
-        self.add_donation = tk.Toplevel(self.master)
-        self.donation = Donacion(self.add_autor_window, self.cursor)
+    def add_lending_window(self):
+        self.add_lending = tk.Toplevel(self.master)
+        self.donation = Prestamos(self.add_lending, self.cursor)
 
 class Autor:
     def __init__(self, master, cursor):
         self.cursor = cursor
         self.master = master
         self.frame = Frame(self.master)
-        self.master.title("Add Autors")
+        self.master.title("Agregar autores")
         self.master.geometry("800x800")
         self.console = Console()
 
@@ -197,3 +197,13 @@ class Autor:
 
         self.number_of_column_to_insert += 1
         self.contador += 1
+
+
+class Prestamos:
+
+    def __init__(self, master, cursor):
+        self.cursor = cursor
+        self.master = master
+        self.frame = Frame(self.master)
+        self.master.title("Agregar Prestamos")
+        self.master.geometry("800x800")
