@@ -309,13 +309,6 @@ class Prestamos:
                 self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
                 self.list_of_values_to_insert.append(self.value_to_table.get())
 
-                self.console.print("Lista valores columna" + str(self.list_of_column_to_insert_value), style='red')
-                self.console.print("Lista valores " + str(self.list_of_values_to_insert), style='blue')
-                self.console.print("Numero de columna a insertar " + str(self.number_of_column_to_insert), style='green')
-                self.console.print("Cantidad de columnas " + str(self.quantity_columns), style='yellow')
-                self.console.print("Contador " + str(self.contador), style='bold red')
-                print("-"*50)
-
         # Cuando se inserte el ultimo valor haga lo siguiente
         if self.number_of_column_to_insert == self.quantity_columns:
             # print(self.list_of_values_to_insert)
