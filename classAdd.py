@@ -13,73 +13,60 @@ class Add:
         self.master.title("Add Window")
         self.master.geometry("400x400")
 
-        self.console = Console()
+
 
         # self.search_button = Button(self.master, text="Search", command=self.show_window)
         # self.search_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-        self.autor_button = Button(self.master, text="Add", command=self.add_autor_window)
+        self.autor_button = Button(self.master, text="Autor", command=self.add_autor_window)
         self.autor_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
 
     def add_autor_window(self):
         self.add_Window = tk.Toplevel(self.master)
-        self.autor = Autor(self.add_Window, self.master)
+        self.autor = Autor(self.add_Window, self.cursor)
 
 
 class Autor:
     def __init__(self, master, cursor):
-        self.master = master
         self.cursor = cursor
+        self.master = master
         self.frame = Frame(self.master)
         self.master.title("Add Autors")
         self.master.geometry("800x800")
 
+        self.console = Console()
 
-
-
-
-
-
-
-
-
-        # self.add_button = Button(self.master, text= "Delete")
-        # self.add_button.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-        # self.modify_button = Button(self.master, text="Modify") 
-        # self.modify_button.place(relx=0.5, rely=0.7, anchor=CENTER)
-
-        # self.label0 = Label(self.master, text="Insertar en tabla:")
-        # self.label0.pack()
+        self.label0 = Label(self.master, text="Insertar en tabla:")
+        self.label0.pack()
         
-        # self.table_of_insert_data_value = StringVar()
-        # self.insert_register_to_table = Entry(self.master, textvariable=self.table_of_insert_data_value)
-        # self.insert_register_to_table.pack()
+        self.table_of_insert_data_value = StringVar()
+        self.insert_register_to_table = Entry(self.master, textvariable=self.table_of_insert_data_value)
+        self.insert_register_to_table.pack()
 
-        # self.test_button = Button(self.master, text="Aceptar", command=self.show_table)
-        # self.test_button.pack()
+        self.test_button = Button(self.master, text="Aceptar", command=self.show_table)
+        self.test_button.pack()
 
-        # self.label1 = Label(self.master, text="Insertar valor:")
-        # self.label1.pack()
+        self.label1 = Label(self.master, text="Insertar valor:")
+        self.label1.pack()
 
-        # self.value_to_table = StringVar()
-        # self.insert_value = Entry(self.master, textvariable=self.value_to_table)
-        # self.insert_value.pack()
+        self.value_to_table = StringVar()
+        self.insert_value = Entry(self.master, textvariable=self.value_to_table)
+        self.insert_value.pack()
 
-        # self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
-        # self.execute_insert.pack()
+        self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
+        self.execute_insert.pack()
 
-        # self.null_button = Button(self.master, text="Sin Va lor", command=self.null_value)#, self. )
-        # self.null_button.pack()        
+        self.null_button = Button(self.master, text="Sin Va lor", command=self.null_value)#, self. )
+        self.null_button.pack()        
 
-        # self.text_box = Text(self.master, width=500, height=500)
-        # self.text_box.pack()
+        self.text_box = Text(self.master, width=500, height=500)
+        self.text_box.pack()
 
-        # global contador
-        # self.contador = 1
+        global contador
+        self.contador = 1
 
-        # self.number_of_column_to_insert = 1
+        self.number_of_column_to_insert = 1
 
 
     def show_table(self) -> None:
