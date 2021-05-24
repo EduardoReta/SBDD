@@ -19,8 +19,8 @@ class Add:
         self.autor_button = Button(self.master, text="Autor", command=self.add_autor_window)
         self.autor_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-        self.donations_button = Button(self.master, text="Prestamos", command=self.add_lending_window)
-        self.donations_button.place(relx=0.5, rely=0.3, anchor=CENTER)
+        self.lending_button = Button(self.master, text="Prestamos", command=self.add_lending_window)
+        self.lending_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
     def add_autor_window(self):
         self.add_autor = tk.Toplevel(self.master)
@@ -28,7 +28,7 @@ class Add:
 
     def add_lending_window(self):
         self.add_lending = tk.Toplevel(self.master)
-        self.donation = Prestamos(self.add_lending, self.cursor)
+        self.lending = Prestamos(self.add_lending, self.cursor)
 
 class Autor:
     def __init__(self, master, cursor):
