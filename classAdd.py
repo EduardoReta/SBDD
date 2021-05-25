@@ -390,9 +390,8 @@ class Prestamos:
 
             # Creamos un registro de devolucion para este prestamo
             print(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'DEFAULT', 'Pendiente')")
-            self.cursor.execute(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'DEFAULT', 'Pendiente')")
+            self.cursor.execute(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'None', 'PENDIENTE')")
             self.cursor.commit()
-
             # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
             self.text_box.delete(1.0, END)
             self.cursor.execute(f"SELECT * FROM tblPRESTAMOS")
@@ -414,6 +413,7 @@ class Prestamos:
             self.quantity_columns = len(self.clean_row_list) - 3
             self.contador = 1
             self.insert_value.delete(0, 'end')
+            self.values_devolution = []
 
         else:
             self.number_of_column_to_insert += 1
@@ -445,7 +445,7 @@ class Devolucion:
         self.insert_value = Entry(self.master, textvariable=self.value_to_table)
         self.insert_value.pack()
 
-        self.execute_insert = Button(self.master, text="Aceptar")#), command=self.insert_value_query)#, self. )
+        self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
         self.execute_insert.pack()
         
         global contador
@@ -478,16 +478,33 @@ class Devolucion:
                     self.clean_row_list.append(y)
 
         self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
+
         for column in self.cursor.description:
             self.text_box.insert(END, str(column[0]) + " | ")
 
         self.row_to_list = [row for row in self.cursor]
+        if self.row_to_list != []:
+            # self.row_to_list = [row for row in self.cursor]
 
-        for item in self.row_to_list:
-            try:
-                self.text_box.insert(END, "\n"+str(item)) 
-            except Exception as e:
-                print(str(e))
+            for item in self.row_to_list:
+                try:
+                    self.text_box.insert(END, "\n"+str(item)) 
+                except Exception as e:
+                    print(str(e))
+
+        else:
+            self.text_box.delete(1.0, END)
+            self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
+            for column in self.cursor.description:
+                self.text_box.insert(END, str(column[0]) + " | ")
+
+            self.row_to_list = [row for row in self.cursor]
+
+            for item in self.row_to_list:
+                try:
+                    self.text_box.insert(END, "\n"+str(item)) 
+                except Exception as e:
+                    print(str(e))
 
 
         # Obtener nombres de columnas
@@ -510,4 +527,34 @@ class Devolucion:
         global list_of_values_to_insert
         self.list_of_values_to_insert = []
 
-        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
+        self.label1.configure(text=f"Inserte {self.clean_row_list[1]} ")
+        
+    def insert_value_query(self):
+        
+        # ID_PRESTAMO -> self.value_to_table.get()
+
+        self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
+        self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
+        self.cursor.commit()
+
+        self.cursor.execute(f"UPDATE tblDEVOLUCION SET FECHA_DEVOLUCION='{self.date_at_devolution}' WHERE ID_PRESTAMO={self.value_to_table.get()}")
+        self.cursor.commit()
+
+
+
+        self.text_box.delete(1.0, END)
+        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
+        for column in self.cursor.description:
+            self.text_box.insert(END, str(column[0]) + " | ")
+
+        self.row_to_list = [row for row in self.cursor]
+
+        for item in self.row_to_list:
+            try:
+                self.text_box.insert(END, "\n"+str(item)) 
+            except Exception as e:
+                print(str(e))
+
+
+
+
