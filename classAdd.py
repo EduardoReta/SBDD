@@ -308,6 +308,9 @@ class Prestamos:
         global list_of_values_to_insert
         self.list_of_values_to_insert = []
 
+        global values_devolution
+        self.values_devolution = []
+
         self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")  
 
 
@@ -374,11 +377,21 @@ class Prestamos:
             print(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
             # print(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
 
+            
+
+            self.cursor.execute("SELECT TOP 1 ID_DEVOLUCION FROM tblDEVOLUCION ORDER BY ID_DEVOLUCION DESC;")
+            self.value_returned = [row for row in self.cursor]
+            x = self.value_returned[0][0] + 1
+
+            self.values_devolution.append(x)
+
             self.cursor.execute(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
             self.cursor.commit()
 
             # Creamos un registro de devolucion para este prestamo
-
+            print(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'DEFAULT', 'Pendiente')")
+            self.cursor.execute(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'DEFAULT', 'Pendiente')")
+            self.cursor.commit()
 
             # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
             self.text_box.delete(1.0, END)
@@ -432,7 +445,7 @@ class Devolucion:
         self.insert_value = Entry(self.master, textvariable=self.value_to_table)
         self.insert_value.pack()
 
-        self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
+        self.execute_insert = Button(self.master, text="Aceptar")#), command=self.insert_value_query)#, self. )
         self.execute_insert.pack()
         
         global contador
@@ -464,7 +477,7 @@ class Devolucion:
                 if re.search('tbl\w+', y):
                     self.clean_row_list.append(y)
 
-        self.cursor.execute(f"SELECT * FROM tblPRESTAMOS")
+        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
         for column in self.cursor.description:
             self.text_box.insert(END, str(column[0]) + " | ")
 
@@ -478,7 +491,7 @@ class Devolucion:
 
 
         # Obtener nombres de columnas
-        self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblPRESTAMOS'")
+        self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblDEVOLUCION'")
         self.row_to_list = [row for row in self.cursor]
         self.clean_row_list = []
         for item in self.row_to_list:
@@ -491,7 +504,7 @@ class Devolucion:
         # Almacenar la columna en la que se va a insertar el valor
         global list_of_column_to_insert_value
         self.list_of_column_to_insert_value = []
-        self.list_of_column_to_insert_value.append("ID_PRESTAMO")
+        self.list_of_column_to_insert_value.append("ID_DEVOLUCION")
 
         # Almacenan los valores a insertar en la tabla
         global list_of_values_to_insert
