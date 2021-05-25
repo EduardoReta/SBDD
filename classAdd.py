@@ -5,6 +5,7 @@ from tkinter import *
 from rich.console import Console
 from rich import style
 from datetime import datetime, timedelta, date
+import time
 
 class Add:
     def __init__(self, master, cursor):
@@ -531,125 +532,167 @@ class Devolucion:
         self.label1.configure(text=f"Inserte {self.clean_row_list[1]} ")
         
     def insert_value_query(self):
-        
-        # ID_PRESTAMO -> self.value_to_table.get()
 
-        # self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
-        self.date_at_devolution = "2021-05-29"
-        self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
-        self.cursor.commit()
-
-        self.cursor.execute(f"UPDATE tblDEVOLUCION SET FECHA_DEVOLUCION='{self.date_at_devolution}' WHERE ID_PRESTAMO={self.value_to_table.get()}")
-        self.cursor.commit()
-
-        # Revisar cada vez que se presione el boton si aun hay devoluciones pendientes.
-        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
-
-
-
+        self.cursor.execute(f"SELECT ID_PRESTAMO FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
 
         self.row_to_list = [row for row in self.cursor]
+        self.id_prestamo_list = []
         if self.row_to_list != []:
-            self.text_box.delete(1.0, END)
-            for column in self.cursor.description:
-                self.text_box.insert(END, str(column[0]) + " | ")
-
             for item in self.row_to_list:
-                try:
-                    self.text_box.insert(END, "\n"+str(item)) 
-                except Exception as e:
-                    print(str(e))
+                self.id_prestamo_list.append(int(item[0]))
 
-        else:
-            # Actualizamos tabla
-            self.text_box.delete(1.0, END)
-            self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
-            for column in self.cursor.description:
-                self.text_box.insert(END, str(column[0]) + " | ")
+        if type(self.value_to_table.get()) == str:
+            messagebox.showinfo(message=f"Tipo de dato no valido")
 
-            self.row_to_list = [row for row in self.cursor]
-
-            for item in self.row_to_list:
-                try:
-                    self.text_box.insert(END, "\n"+str(item)) 
-                except Exception as e:
-                    print(str(e))
-
-                    
-        self.cursor.execute(f"SELECT FECHA_PRESTAMO FROM tblPRESTAMOS WHERE ID_PRESTAMO={self.value_to_table.get()};")
-        self.lending_date = []
-        for item in self.cursor:
-            self.lending_date.append(item)
-
-        print("Fecha prestamo", self.lending_date[0][0])
-
-        self.l_date = str(self.lending_date[0][0])
-        self.lending_day = self.l_date[-2:]
-        self.lending_month = self.l_date[5:7]
-        self.lending_year = self.l_date[:4]
-
-        print("Day", self.lending_day)
-        print("Month", self.lending_month)
-        print("Year", self.lending_year)
-
-        self.cursor.execute(f"SELECT FECHA_DEVOLUCION FROM tblDEVOLUCION WHERE ID_PRESTAMO={self.value_to_table.get()};")
-        self.devolution_date = []
-        for item in self.cursor:
-            self.devolution_date.append(item)
-
-        print("Fecha devolucion", self.devolution_date[0][0])
-
-        self.d_date = str(self.devolution_date[0][0])
-        self.devolution_day = self.d_date[-2:]
-        self.devolution_month = self.d_date[5:7]
-        self.devolution_year = self.d_date[:4]
-
-        print("Day", self.devolution_day)
-        print("Month", self.devolution_month)
-        print("Year", self.devolution_year)
+        
+        elif int(self.value_to_table.get()) in self.id_prestamo_list:
 
 
-        # Obtener cantidad de dias entre FECHA_PRESTAMO Y FECHA_DEVOLUCION
-        self.d0 = date(int(self.lending_year), int(self.lending_month), int(self.lending_day))
-        self.d1 = date(int(self.devolution_year), int(self.devolution_month), int(self.devolution_day))
-        self.delta = self.d1 - self.d0
-        print("Dias diferencia", self.delta.days)
+            # ID_PRESTAMO -> self.value_to_table.get()
 
-        if int(self.delta.days) > 3:
-
-            # GET ID_MULTA
-            self.values_fine = []
-            self.cursor.execute("SELECT TOP 1 ID_MULTA FROM tblMULTA ORDER BY ID_MULTA DESC;")
-            self.values_fine = [row for row in self.cursor]
-
-
-            self.id_fine = []
-
-            # If no ID create one
-            if self.values_fine == []:
-                self.next_id = 20001
-                self.id_fine.append(self.next_id + 1) 
-
-            elif self.values_fine != []:
-                self.x = self.values_fine[0][0] + 1
-                self.id_fine.append(self.x)
-
-            # Get ID_DEVOLUCION
-            self.id_dev_value = []
-            self.cursor.execute("SELECT TOP 1 ID_DEVOLUCION FROM tblDEVOLUCION ORDER BY ID_DEVOLUCION DESC;")
-            self.id_dev_value = [row for row in self.cursor]
-            self.id_dev = self.id_dev_value[0][0]
-
-            # Get COSTO_MULTA
-            self.amount_fine = int(self.delta.days) * 10
-
-            # self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTAS, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0][0]}, {self.id_dev_value[0][0]}, {self.delta}, {self.amount_fine})")
-            self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.id_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine})")
+            # self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
+            self.date_at_devolution = "2021-05-29"
+            self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
             self.cursor.commit()
 
-            messagebox.showinfo(message=f"Multa detectada\n ID_MULTA: {self.id_fine[0]} \n Dias de Retraso: {int(self.delta.days)} \n Deuda: {self.amount_fine}", title="Aviso!")
+            self.cursor.execute(f"UPDATE tblDEVOLUCION SET FECHA_DEVOLUCION='{self.date_at_devolution}' WHERE ID_PRESTAMO={self.value_to_table.get()}")
+            self.cursor.commit()
 
-            self.values_fine = []
-            self.id_dev_value = []
+            # Revisar cada vez que se presione el boton si aun hay devoluciones pendientes.
+            self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
 
+            self.row_to_list = [row for row in self.cursor]
+            if self.row_to_list != []:
+                self.text_box.delete(1.0, END)
+                for column in self.cursor.description:
+                    self.text_box.insert(END, str(column[0]) + " | ")
+
+                for item in self.row_to_list:
+                    try:
+                        self.text_box.insert(END, "\n"+str(item)) 
+                    except Exception as e:
+                        print(str(e))
+
+            else:
+                # Actualizamos tabla
+                self.text_box.delete(1.0, END)
+                self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
+                for column in self.cursor.description:
+                    self.text_box.insert(END, str(column[0]) + " | ")
+
+                self.row_to_list = [row for row in self.cursor]
+
+                for item in self.row_to_list:
+                    try:
+                        self.text_box.insert(END, "\n"+str(item)) 
+                    except Exception as e:
+                        print(str(e))
+
+                        
+            self.cursor.execute(f"SELECT FECHA_PRESTAMO FROM tblPRESTAMOS WHERE ID_PRESTAMO={self.value_to_table.get()};")
+            self.lending_date = []
+            for item in self.cursor:
+                self.lending_date.append(item)
+
+            print("Fecha prestamo", self.lending_date[0][0])
+
+            self.l_date = str(self.lending_date[0][0])
+            self.lending_day = self.l_date[-2:]
+            self.lending_month = self.l_date[5:7]
+            self.lending_year = self.l_date[:4]
+
+            print("Day", self.lending_day)
+            print("Month", self.lending_month)
+            print("Year", self.lending_year)
+
+            self.cursor.execute(f"SELECT FECHA_DEVOLUCION FROM tblDEVOLUCION WHERE ID_PRESTAMO={self.value_to_table.get()};")
+            self.devolution_date = []
+            for item in self.cursor:
+                self.devolution_date.append(item)
+
+            print("Fecha devolucion", self.devolution_date[0][0])
+
+            self.d_date = str(self.devolution_date[0][0])
+            self.devolution_day = self.d_date[-2:]
+            self.devolution_month = self.d_date[5:7]
+            self.devolution_year = self.d_date[:4]
+
+            print("Day", self.devolution_day)
+            print("Month", self.devolution_month)
+            print("Year", self.devolution_year)
+
+
+            # Obtener cantidad de dias entre FECHA_PRESTAMO Y FECHA_DEVOLUCION
+            self.d0 = date(int(self.lending_year), int(self.lending_month), int(self.lending_day))
+            self.d1 = date(int(self.devolution_year), int(self.devolution_month), int(self.devolution_day))
+            self.delta = self.d1 - self.d0
+            print("Dias diferencia", self.delta.days)
+
+            if int(self.delta.days) > 3:
+
+                # GET ID_MULTA
+                self.values_fine = []
+                self.cursor.execute("SELECT TOP 1 ID_MULTA FROM tblMULTA ORDER BY ID_MULTA DESC;")
+                self.values_fine = [row for row in self.cursor]
+
+
+                self.id_fine = []
+
+                # If no ID create one
+                if self.values_fine == []:
+                    self.next_id = 20001
+                    self.id_fine.append(self.next_id + 1) 
+
+                elif self.values_fine != []:
+                    self.x = self.values_fine[0][0] + 1
+                    self.id_fine.append(self.x)
+
+                # Get ID_DEVOLUCION
+                self.id_dev_value = []
+                self.cursor.execute("SELECT TOP 1 ID_DEVOLUCION FROM tblDEVOLUCION ORDER BY ID_DEVOLUCION DESC;")
+                self.id_dev_value = [row for row in self.cursor]
+                self.id_dev = self.id_dev_value[0][0]
+
+                # Get COSTO_MULTA
+                self.amount_fine = int(self.delta.days) * 10
+
+                # self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTAS, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0][0]}, {self.id_dev_value[0][0]}, {self.delta}, {self.amount_fine})")
+                self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.id_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine})")
+                self.cursor.commit()
+
+                messagebox.showinfo(message=f"Multa detectada\n ID_MULTA: {self.id_fine[0]} \n Dias de Retraso: {int(self.delta.days)} \n Deuda: {self.amount_fine}", title="Aviso!")
+
+                self.values_fine = []
+                self.id_dev_value = []
+
+
+
+
+        else:
+
+            messagebox.showinfo(message=f"Valor no valido")
+
+            # self.text_box.delete(1.0, END)
+            # self.text_box.insert(END, "Valor no existente.")
+            # print(self.value_to_table.get())
+            # print(self.id_prestamo_list)
+
+            # time.sleep(3)
+
+            # self.text_box.delete(1.0, END)
+
+            # self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
+
+            # for column in self.cursor.description:
+            #     self.text_box.insert(END, str(column[0]) + " | ")
+
+            # self.row_to_list = [row for row in self.cursor]
+            # if self.row_to_list != []:
+            #     # self.row_to_list = [row for row in self.cursor]
+
+            #     for item in self.row_to_list:
+            #         try:
+            #             self.text_box.insert(END, "\n"+str(item)) 
+            #         except Exception as e:
+            #             print(str(e))   
 
