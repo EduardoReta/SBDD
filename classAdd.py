@@ -115,20 +115,22 @@ class Autor:
         self.list_of_values_to_insert = []
 
         # Le asignamos el siguiente ID_AUTOR que este disponible
-        # self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
-        # self.value_returned = [row for row in self.cursor]
-        # self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
+        self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
+        self.value_returned = [row for row in self.cursor]
+        self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
 
         self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")               
 
 
     def insert_value_query(self):
 
-        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
-        self.label1.update()
-
+        try:
+            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
+            self.label1.update()
+        except Exception as e:
+            pass
+        
         if self.number_of_column_to_insert <= self.quantity_columns:
-
             if self.contador <= self.quantity_columns:
                 self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
                 self.list_of_values_to_insert.append(self.value_to_table.get())
@@ -139,7 +141,6 @@ class Autor:
                 self.console.print("Cantidad de columnas " + str(self.quantity_columns), style='yellow')
                 self.console.print("Contador " + str(self.contador), style='bold red')
                 print("-"*50)
-
             else:
                 print("Ya se paso")
 
@@ -177,16 +178,14 @@ class Autor:
                 self.list_of_values_to_insert = []
                         
         else:
-            self.number_of_column_to_insert += 1
-            self.contador = self.contador + 1
-            self.insert_value.delete(0, 'end')
+            pass
 
         # FIXME: Mandar mensaje si se inserto el ultimo valor de la tabla
         # NOTE: No es necesario avisar ya que cuando se inserte el ultimo valor, se cambiara
         #       el nombre del Label por el de la primera columna.
-        # self.number_of_column_to_insert += 1
-        # self.contador = self.contador + 1
-        # self.insert_value.delete(0, 'end')
+        self.number_of_column_to_insert += 1
+        self.contador = self.contador + 1
+        self.insert_value.delete(0, 'end')
 
 
     # Insertar "DEFAULT" como valor para dar valor nulo a columna dada 
@@ -199,11 +198,6 @@ class Autor:
         self.number_of_column_to_insert += 1
         self.contador += 1
 
-    def new_id_autor(self):
-        # Le asignamos el siguiente ID_PRESTAMO que este disponible
-        self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
-        self.value_returned = [row for row in self.cursor]
-        self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
 
 class Prestamos:
 
