@@ -5,8 +5,14 @@ Agregar:
         - [x] Permitir agregar cuantos registros se deseen
         - [X] Actualizar tabla cuando se inserte un registro
 
+    Prestamos
+    - [x] Agregar registro a tabla
+        - [x] Permitir agregar cuantos registros se deseen
+        - [x] Actualizar tabla cuando se inserte un registro
 
-        QUITAR DIA MES ANIO PUBLICACION ESAS COLUMNAS NO VAN PTM
+    Devolucion
+        - [ ] Cuando se entregue el crear registro si es que hay multa en tblMULTA y si no
+              pasar desapercibido.
 
 
 

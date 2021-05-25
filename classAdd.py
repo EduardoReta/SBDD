@@ -13,14 +13,13 @@ class Add:
         self.master.title("Add Window")
         self.master.geometry("400x400")
 
-        # self.search_button = Button(self.master, text="Search", command=self.show_window)
-        # self.search_button.place(relx=0.5, rely=0.1, anchor=CENTER)
-
         self.autor_button = Button(self.master, text="Autor", command=self.add_autor_window)
         self.autor_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
         self.lending_button = Button(self.master, text="Prestamos", command=self.add_lending_window)
         self.lending_button.place(relx=0.5, rely=0.3, anchor=CENTER)
+
+        self.devolution_button = B
 
     def add_autor_window(self):
         self.add_autor = tk.Toplevel(self.master)
@@ -343,7 +342,7 @@ class Prestamos:
 
         # Cuando se inserte el ultimo valor haga lo siguiente
         if self.number_of_column_to_insert == self.quantity_columns:
-            
+
             # Reiniciar valores para que puedan volver a introducir registros
             self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
         
@@ -397,7 +396,6 @@ class Prestamos:
             self.insert_value.delete(0, 'end')
 
         else:
-
             self.number_of_column_to_insert += 1
             self.contador = self.contador + 1
             self.insert_value.delete(0, 'end')
@@ -408,3 +406,7 @@ class Prestamos:
         self.cursor.execute("SELECT TOP 1 ID_PRESTAMO FROM tblPRESTAMOS ORDER BY ID_PRESTAMO DESC;")
         self.value_returned = [row for row in self.cursor]
         self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
+
+
+class Devolucion:
+    pass
