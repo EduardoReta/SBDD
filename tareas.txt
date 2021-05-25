@@ -1,7 +1,24 @@
-Formas de Agregar:
+Agregar:
+
+    Autor
     - [x] Agregar registro a tabla
         - [x] Permitir agregar cuantos registros se deseen
-        - [ ] Sacar mensaje si la columna esta duplicada
-    - [x] Agregar columna a tabla
-        - [x] Sacar mensaje si la columna esta duplicada
-    - [ ] Agregar tabla
+        - [X] Actualizar tabla cuando se inserte un registro
+
+
+        QUITAR DIA MES ANIO PUBLICACION ESAS COLUMNAS NO VAN PTM
+
+
+
+
+
+Prestamos y cuando aplicar multas.
+
+    Al momento de hacer el prestamo.
+
+        1. En FECHA_PRESTAMO se pone la fecha en el momento en el que se hizo el prestamo,
+           y en FECHA_REGRESO se pone la fecha 3 dias posterior a la FECHA_PRESTAMO.
+
+    Al momento de el regreso.
+
+        1. 
