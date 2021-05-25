@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import re
 from tkinter import *
 from rich.console import Console
@@ -541,22 +542,40 @@ class Devolucion:
         self.cursor.execute(f"UPDATE tblDEVOLUCION SET FECHA_DEVOLUCION='{self.date_at_devolution}' WHERE ID_PRESTAMO={self.value_to_table.get()}")
         self.cursor.commit()
 
+        # Revisar cada vez que se presione el boton si aun hay devoluciones pendientes.
+        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
 
-        # Actualizamos tabla
-        self.text_box.delete(1.0, END)
-        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
-        for column in self.cursor.description:
-            self.text_box.insert(END, str(column[0]) + " | ")
+
+
 
         self.row_to_list = [row for row in self.cursor]
+        if self.row_to_list != []:
+            self.text_box.delete(1.0, END)
+            for column in self.cursor.description:
+                self.text_box.insert(END, str(column[0]) + " | ")
 
-        for item in self.row_to_list:
-            try:
-                self.text_box.insert(END, "\n"+str(item)) 
-            except Exception as e:
-                print(str(e))
+            for item in self.row_to_list:
+                try:
+                    self.text_box.insert(END, "\n"+str(item)) 
+                except Exception as e:
+                    print(str(e))
 
+        else:
+            # Actualizamos tabla
+            self.text_box.delete(1.0, END)
+            self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
+            for column in self.cursor.description:
+                self.text_box.insert(END, str(column[0]) + " | ")
 
+            self.row_to_list = [row for row in self.cursor]
+
+            for item in self.row_to_list:
+                try:
+                    self.text_box.insert(END, "\n"+str(item)) 
+                except Exception as e:
+                    print(str(e))
+
+                    
         self.cursor.execute(f"SELECT FECHA_PRESTAMO FROM tblPRESTAMOS WHERE ID_PRESTAMO={self.value_to_table.get()};")
         self.lending_date = []
         for item in self.cursor:
@@ -603,14 +622,17 @@ class Devolucion:
             self.cursor.execute("SELECT TOP 1 ID_MULTA FROM tblMULTA ORDER BY ID_MULTA DESC;")
             self.values_fine = [row for row in self.cursor]
 
+
+            self.id_fine = []
+
             # If no ID create one
             if self.values_fine == []:
                 self.next_id = 20001
-                self.values_fine.append(self.next_id + 1) 
+                self.id_fine.append(self.next_id + 1) 
 
             elif self.values_fine != []:
                 self.x = self.values_fine[0][0] + 1
-                self.values_fine.append(self.x)
+                self.id_fine.append(self.x)
 
             # Get ID_DEVOLUCION
             self.id_dev_value = []
@@ -622,8 +644,12 @@ class Devolucion:
             self.amount_fine = int(self.delta.days) * 10
 
             # self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTAS, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0][0]}, {self.id_dev_value[0][0]}, {self.delta}, {self.amount_fine})")
-            self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine})")
+            self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.id_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine})")
+            self.cursor.commit()
+
+            messagebox.showinfo(message=f"Multa detectada\n ID_MULTA: {self.id_fine[0]} \n Dias de Retraso: {int(self.delta.days)} \n Deuda: {self.amount_fine}", title="Aviso!")
 
             self.values_fine = []
             self.id_dev_value = []
+
 
