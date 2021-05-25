@@ -3,7 +3,7 @@ import re
 from tkinter import *
 from rich.console import Console
 from rich import style
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 class Add:
     def __init__(self, master, cursor):
@@ -533,7 +533,8 @@ class Devolucion:
         
         # ID_PRESTAMO -> self.value_to_table.get()
 
-        self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
+        # self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
+        self.date_at_devolution = "2021-05-29"
         self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
         self.cursor.commit()
 
@@ -541,7 +542,7 @@ class Devolucion:
         self.cursor.commit()
 
 
-
+        # Actualizamos tabla
         self.text_box.delete(1.0, END)
         self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
         for column in self.cursor.description:
@@ -556,5 +557,73 @@ class Devolucion:
                 print(str(e))
 
 
+        self.cursor.execute(f"SELECT FECHA_PRESTAMO FROM tblPRESTAMOS WHERE ID_PRESTAMO={self.value_to_table.get()};")
+        self.lending_date = []
+        for item in self.cursor:
+            self.lending_date.append(item)
 
+        print("Fecha prestamo", self.lending_date[0][0])
+
+        self.l_date = str(self.lending_date[0][0])
+        self.lending_day = self.l_date[-2:]
+        self.lending_month = self.l_date[5:7]
+        self.lending_year = self.l_date[:4]
+
+        print("Day", self.lending_day)
+        print("Month", self.lending_month)
+        print("Year", self.lending_year)
+
+        self.cursor.execute(f"SELECT FECHA_DEVOLUCION FROM tblDEVOLUCION WHERE ID_PRESTAMO={self.value_to_table.get()};")
+        self.devolution_date = []
+        for item in self.cursor:
+            self.devolution_date.append(item)
+
+        print("Fecha devolucion", self.devolution_date[0][0])
+
+        self.d_date = str(self.devolution_date[0][0])
+        self.devolution_day = self.d_date[-2:]
+        self.devolution_month = self.d_date[5:7]
+        self.devolution_year = self.d_date[:4]
+
+        print("Day", self.devolution_day)
+        print("Month", self.devolution_month)
+        print("Year", self.devolution_year)
+
+
+        # Obtener cantidad de dias entre FECHA_PRESTAMO Y FECHA_DEVOLUCION
+        self.d0 = date(int(self.lending_year), int(self.lending_month), int(self.lending_day))
+        self.d1 = date(int(self.devolution_year), int(self.devolution_month), int(self.devolution_day))
+        self.delta = self.d1 - self.d0
+        print("Dias diferencia", self.delta.days)
+
+        if int(self.delta.days) > 3:
+
+            # GET ID_MULTA
+            self.values_fine = []
+            self.cursor.execute("SELECT TOP 1 ID_MULTA FROM tblMULTA ORDER BY ID_MULTA DESC;")
+            self.values_fine = [row for row in self.cursor]
+
+            # If no ID create one
+            if self.values_fine == []:
+                self.next_id = 20001
+                self.values_fine.append(self.next_id + 1) 
+
+            elif self.values_fine != []:
+                self.x = self.values_fine[0][0] + 1
+                self.values_fine.append(self.x)
+
+            # Get ID_DEVOLUCION
+            self.id_dev_value = []
+            self.cursor.execute("SELECT TOP 1 ID_DEVOLUCION FROM tblDEVOLUCION ORDER BY ID_DEVOLUCION DESC;")
+            self.id_dev_value = [row for row in self.cursor]
+            self.id_dev = self.id_dev_value[0][0]
+
+            # Get COSTO_MULTA
+            self.amount_fine = int(self.delta.days) * 10
+
+            # self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTAS, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0][0]}, {self.id_dev_value[0][0]}, {self.delta}, {self.amount_fine})")
+            self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine})")
+
+            self.values_fine = []
+            self.id_dev_value = []
 
