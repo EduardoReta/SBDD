@@ -477,7 +477,7 @@ class Devolucion:
                 if re.search('tbl\w+', y):
                     self.clean_row_list.append(y)
 
-        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION")
+        self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
         for column in self.cursor.description:
             self.text_box.insert(END, str(column[0]) + " | ")
 
