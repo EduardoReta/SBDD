@@ -1,9 +1,9 @@
-# from testgui import *
 import tkinter as tk
 import re
 from tkinter import *
 from rich.console import Console
 from rich import style
+from datetime import datetime, timedelta
 
 class Add:
     def __init__(self, master, cursor):
@@ -343,16 +343,26 @@ class Prestamos:
 
         # Cuando se inserte el ultimo valor haga lo siguiente
         if self.number_of_column_to_insert == self.quantity_columns:
-            # print(self.list_of_values_to_insert)
+            
             # Reiniciar valores para que puedan volver a introducir registros
             self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
         
 
+            # Agregamos los ultimos dos elementos de la lista (FECHA_PRESTAMO Y FECHA_REGRESO)
             self.list_of_column_to_insert_value.append(self.clean_row_list[-2])
             self.list_of_column_to_insert_value.append(self.clean_row_list[-1])
 
-            self.list_of_values_to_insert.append("fecha1")
-            self.list_of_values_to_insert.append("fecha2")
+            # Obtener fecha al momento de prestarse
+            self.date_at_lending = datetime.today().strftime('%Y-%m-%d')
+
+            # Obtener fecha de regreso esperada (+3 dias)
+            self.date = datetime.strptime(self.date_at_lending, "%Y-%m-%d")
+            self.modified_date = self.date + timedelta(days=3)
+            self.date_at_return = datetime.strftime(self.modified_date, "%Y-%m-%d")
+
+            self.list_of_values_to_insert.append(self.date_at_lending)
+            self.list_of_values_to_insert.append(self.date_at_return)
+
             print("*"*50)
             print(self.list_of_column_to_insert_value)
             print(self.list_of_values_to_insert)
