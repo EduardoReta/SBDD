@@ -19,7 +19,8 @@ class Add:
         self.lending_button = Button(self.master, text="Prestamos", command=self.add_lending_window)
         self.lending_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
-        self.devolution_button = B
+        self.devolution_button = Button(self.master, text="Devoluciones", command=self.add_devolution_window)
+        self.devolution_button.place(relx=0.5, rely=0.5, anchor=CENTER)
 
     def add_autor_window(self):
         self.add_autor = tk.Toplevel(self.master)
@@ -28,6 +29,10 @@ class Add:
     def add_lending_window(self):
         self.add_lending = tk.Toplevel(self.master)
         self.lending = Prestamos(self.add_lending, self.cursor)
+
+    def add_devolution_window(self):
+        self.add_devolution = tk.Toplevel(self.master)
+        self.devolution = Devolucion(self.add_devolution, self.cursor)
 
 class Autor:
     def __init__(self, master, cursor):
@@ -225,7 +230,7 @@ class Prestamos:
         self.cursor = cursor
         self.master = master
         self.frame = Frame(self.master)
-        self.master.title("Agregar Prestamos")
+        self.master.title("Prestamos")
         self.master.geometry("800x800")
         self.console = Console()
 
@@ -409,4 +414,10 @@ class Prestamos:
 
 
 class Devolucion:
-    pass
+     def __init__(self, master, cursor):
+        self.cursor = cursor
+        self.master = master
+        self.frame = Frame(self.master)
+        self.master.title("Devoluciones")
+        self.master.geometry("800x800")
+        self.console = Console()
