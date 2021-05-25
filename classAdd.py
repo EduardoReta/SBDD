@@ -414,10 +414,69 @@ class Prestamos:
 
 
 class Devolucion:
-     def __init__(self, master, cursor):
+
+    def __init__(self, master, cursor):
         self.cursor = cursor
         self.master = master
         self.frame = Frame(self.master)
         self.master.title("Devoluciones")
         self.master.geometry("800x800")
         self.console = Console()
+
+        self.text_box = Text(self.master, width=500, height=500)
+        self.text_box.pack()
+
+
+        self.show_table()
+
+    def show_table(self) -> str:
+        self.text_box.delete(1.0, END)
+
+        # Obtenemos el numero de columnas de la tabla a la que se desea agregar el registro para
+        # cambiar dinamicamente el numero de widgets "Entry" (entrada texto) de acuerdo
+        # a la tabla seleccionada
+        self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'tbl%'")
+        self.row_to_list = [row for row in self.cursor]
+
+        # Lista con el nombre de las puras tablas
+        self.clean_row_list = [] 
+
+        for x in self.row_to_list:
+            for y in x:
+                if re.search('tbl\w+', y):
+                    self.clean_row_list.append(y)
+
+        self.cursor.execute(f"SELECT * FROM tblPRESTAMOS")
+        for column in self.cursor.description:
+            self.text_box.insert(END, str(column[0]) + " | ")
+
+        self.row_to_list = [row for row in self.cursor]
+
+        for item in self.row_to_list:
+            try:
+                self.text_box.insert(END, "\n"+str(item)) 
+            except Exception as e:
+                print(str(e))
+
+
+        # Obtener nombres de columnas
+        self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblPRESTAMOS'")
+        self.row_to_list = [row for row in self.cursor]
+        self.clean_row_list = []
+        for item in self.row_to_list:
+            self.clean_row_list.append(item[3])
+        
+        # Numero de columnas
+        global quantity_columns
+        self.quantity_columns = len(self.clean_row_list) - 3 # ID_PRESTAMO, FECHA_PRESTAMO, FECHA REGRESO
+        print(self.quantity_columns)
+        # Almacenar la columna en la que se va a insertar el valor
+        global list_of_column_to_insert_value
+        self.list_of_column_to_insert_value = []
+        self.list_of_column_to_insert_value.append("ID_PRESTAMO")
+
+        # Almacenan los valores a insertar en la tabla
+        global list_of_values_to_insert
+        self.list_of_values_to_insert = []
+
+        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
