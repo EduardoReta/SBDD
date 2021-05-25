@@ -375,8 +375,10 @@ class Prestamos:
             # print(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
 
             self.cursor.execute(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
-
             self.cursor.commit()
+
+            # Creamos un registro de devolucion para este prestamo
+
 
             # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
             self.text_box.delete(1.0, END)
@@ -419,9 +421,25 @@ class Devolucion:
         self.cursor = cursor
         self.master = master
         self.frame = Frame(self.master)
-        self.master.title("Devoluciones")
+        self.master.title("Devolucion")
         self.master.geometry("800x800")
         self.console = Console()
+
+        self.label1 = Label(self.master, text="Insertar valor:")
+        self.label1.pack()
+
+        self.value_to_table = StringVar()
+        self.insert_value = Entry(self.master, textvariable=self.value_to_table)
+        self.insert_value.pack()
+
+        self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
+        self.execute_insert.pack()
+        
+        global contador
+        self.contador = 1
+
+        self.number_of_column_to_insert = 1
+
 
         self.text_box = Text(self.master, width=500, height=500)
         self.text_box.pack()
