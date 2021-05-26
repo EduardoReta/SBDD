@@ -24,6 +24,9 @@ class Add:
         self.devolution_button = Button(self.master, text="Devoluciones", command=self.add_devolution_window)
         self.devolution_button.place(relx=0.5, rely=0.5, anchor=CENTER)
 
+        self.fine_button = Button(self.master, text="Multas", command=self.add_fine_window)
+        self.fine_button.place(relx=0.5, rely=0.7, anchor=CENTER)
+
     def add_autor_window(self):
         self.add_autor = tk.Toplevel(self.master)
         self.autor = Autor(self.add_autor, self.cursor)
@@ -35,6 +38,10 @@ class Add:
     def add_devolution_window(self):
         self.add_devolution = tk.Toplevel(self.master)
         self.devolution = Devolucion(self.add_devolution, self.cursor)
+
+    def add_fine_window(self):
+        self.add_fine = tk.Toplevel(self.master)
+        self.fine = Multas(self.add_fine, self.cursor)
 
 class Autor:
     def __init__(self, master, cursor):
@@ -665,34 +672,86 @@ class Devolucion:
                 self.values_fine = []
                 self.id_dev_value = []
 
-
-
-
         else:
 
             messagebox.showinfo(message=f"Valor no valido")
 
-            # self.text_box.delete(1.0, END)
-            # self.text_box.insert(END, "Valor no existente.")
-            # print(self.value_to_table.get())
-            # print(self.id_prestamo_list)
 
-            # time.sleep(3)
+class Multas:
+    def __init__(self, master, cursor):
+        self.cursor = cursor
+        self.master = master
+        self.frame = Frame(self.master)
+        self.master.title("Multas")
+        self.master.geometry("800x800")
+        self.console = Console()
 
-            # self.text_box.delete(1.0, END)
+        self.label1 = Label(self.master, text="Insertar")
+        self.label1.pack()
 
-            # self.cursor.execute(f"SELECT * FROM tblDEVOLUCION WHERE ESTADO='Pendiente';")
+        self.value_to_table = StringVar()
+        self.insert_value = Entry(self.master, textvariable=self.value_to_table)
+        self.insert_value.pack()
 
-            # for column in self.cursor.description:
-            #     self.text_box.insert(END, str(column[0]) + " | ")
+        self.execute_insert = Button(self.master, text="Aceptar")#, command=self.fine_commands)#, self. )
+        self.execute_insert.pack()
 
-            # self.row_to_list = [row for row in self.cursor]
-            # if self.row_to_list != []:
-            #     # self.row_to_list = [row for row in self.cursor]
+        self.text_box = Text(self.master, width=500, height=500)
+        self.text_box.pack()
 
-            #     for item in self.row_to_list:
-            #         try:
-            #             self.text_box.insert(END, "\n"+str(item)) 
-            #         except Exception as e:
-            #             print(str(e))   
+        self.show_table()
+
+    def show_table(self) -> str:
+        self.text_box.delete(1.0, END)
+
+        # Obtenemos el numero de columnas de la tabla a la que se desea agregar el registro para
+        # cambiar dinamicamente el numero de widgets "Entry" (entrada texto) de acuerdo
+        # a la tabla seleccionada
+        self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'tbl%'")
+        self.row_to_list = [row for row in self.cursor]
+
+        # Lista con el nombre de las puras tablas
+        self.clean_row_list = [] 
+
+        for x in self.row_to_list:
+            for y in x:
+                if re.search('tbl\w+', y):
+                    self.clean_row_list.append(y)
+
+        self.cursor.execute(f"SELECT * FROM tblMULTA")
+        for column in self.cursor.description:
+            self.text_box.insert(END, str(column[0]) + " | ")
+
+        self.row_to_list = [row for row in self.cursor]
+
+        for item in self.row_to_list:
+            try:
+                self.text_box.insert(END, "\n"+str(item)) 
+            except Exception as e:
+                print(str(e))
+
+
+        # Obtener nombres de columnas
+        self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblMULTA'")
+        self.row_to_list = [row for row in self.cursor]
+        self.clean_row_list = []
+        for item in self.row_to_list:
+            self.clean_row_list.append(item[3])
+
+        # Numero de columnas
+        global quantity_columns
+        self.quantity_columns = len(self.clean_row_list) - 1
+
+        # Almacenar la columna en la que se va a insertar el valor
+        global list_of_column_to_insert_value
+        self.list_of_column_to_insert_value = []
+        self.list_of_column_to_insert_value.append("ID_MULTA")
+
+        # Almacenan los valores a insertar en la tabla
+        global list_of_values_to_insert
+        self.list_of_values_to_insert = []
+
+        # self.label1.configure(text=f" de: )               
+
+
 
