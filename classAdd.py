@@ -548,15 +548,10 @@ class Devolucion:
             for item in self.row_to_list:
                 self.id_prestamo_list.append(int(item[0]))
 
-        if type(self.value_to_table.get()) == str:
-            messagebox.showinfo(message=f"Tipo de dato no valido")
-
-        
-        elif int(self.value_to_table.get()) in self.id_prestamo_list:
-
+        try:
 
             # ID_PRESTAMO -> self.value_to_table.get()
-
+            # NOTE: FECHA
             # self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
             self.date_at_devolution = "2021-05-29"
             self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
@@ -664,17 +659,23 @@ class Devolucion:
                 self.amount_fine = int(self.delta.days) * 10
 
                 # self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTAS, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.values_fine[0][0]}, {self.id_dev_value[0][0]}, {self.delta}, {self.amount_fine})")
-                self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA) VALUES ({self.id_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine})")
+                self.cursor.execute(f"INSERT INTO tblMULTA (ID_MULTA, ID_DEVOLUCION, DIAS_RETRASO, COSTO_MULTA, ESTADO) VALUES ({self.id_fine[0]}, {self.id_dev}, {int(self.delta.days)}, {self.amount_fine}, 'PENDIENTE')")
                 self.cursor.commit()
+
+                self.insert_value.delete(0, 'end')
+
 
                 messagebox.showinfo(message=f"Multa detectada\n ID_MULTA: {self.id_fine[0]} \n Dias de Retraso: {int(self.delta.days)} \n Deuda: {self.amount_fine}", title="Aviso!")
 
                 self.values_fine = []
                 self.id_dev_value = []
 
-        else:
-
+        except Exception as e:
             messagebox.showinfo(message=f"Valor no valido")
+
+        # else:
+
+        #     messagebox.showinfo(message=f"Valor no valido")
 
 
 class Multas:
@@ -693,7 +694,7 @@ class Multas:
         self.insert_value = Entry(self.master, textvariable=self.value_to_table)
         self.insert_value.pack()
 
-        self.execute_insert = Button(self.master, text="Aceptar")#, command=self.fine_commands)#, self. )
+        self.execute_insert = Button(self.master, text="Aceptar", command=self.fine_actions)
         self.execute_insert.pack()
 
         self.text_box = Text(self.master, width=500, height=500)
@@ -704,9 +705,6 @@ class Multas:
     def show_table(self) -> str:
         self.text_box.delete(1.0, END)
 
-        # Obtenemos el numero de columnas de la tabla a la que se desea agregar el registro para
-        # cambiar dinamicamente el numero de widgets "Entry" (entrada texto) de acuerdo
-        # a la tabla seleccionada
         self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'tbl%'")
         self.row_to_list = [row for row in self.cursor]
 
@@ -718,18 +716,20 @@ class Multas:
                 if re.search('tbl\w+', y):
                     self.clean_row_list.append(y)
 
-        self.cursor.execute(f"SELECT * FROM tblMULTA")
-        for column in self.cursor.description:
-            self.text_box.insert(END, str(column[0]) + " | ")
+        self.text_box.delete(1.0, END)
 
+        self.cursor.execute(f"SELECT * FROM tblMULTA WHERE ESTADO='PENDIENTE';")
         self.row_to_list = [row for row in self.cursor]
+        if self.row_to_list != []:
+            self.text_box.delete(1.0, END)
+            for column in self.cursor.description:
+                self.text_box.insert(END, str(column[0]) + " | ")
 
-        for item in self.row_to_list:
-            try:
-                self.text_box.insert(END, "\n"+str(item)) 
-            except Exception as e:
-                print(str(e))
-
+            for item in self.row_to_list:
+                try:
+                    self.text_box.insert(END, "\n"+str(item)) 
+                except Exception as e:
+                    print(str(e))
 
         # Obtener nombres de columnas
         self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblMULTA'")
@@ -751,7 +751,79 @@ class Multas:
         global list_of_values_to_insert
         self.list_of_values_to_insert = []
 
-        # self.label1.configure(text=f" de: )               
+        self.label1.configure(text=f"ID_MULTA")
+
+    def fine_actions(self):
+        try:
+            self.cursor.execute(f"SELECT ID_MULTA FROM tblMULTA;")
+
+            self.x = [item for item in self.cursor]
+            self.clean_x = []
+            for item in self.x:
+                self.clean_x.append(item[0])
+
+            if int(self.value_to_table.get()) in self.clean_x:
+                print("entro")
+                self.text_box.delete(1.0, END)
+
+                self.cursor.execute(f"SELECT * FROM tblMULTA WHERE ESTADO='PENDIENTE';")
+                self.row_to_list = [row for row in self.cursor]
+                if self.row_to_list != []:
+                    self.text_box.delete(1.0, END)
+                    for column in self.cursor.description:
+                        self.text_box.insert(END, str(column[0]) + " | ")
+
+                    for item in self.row_to_list:
+                        try:
+                            self.text_box.insert(END, "\n"+str(item)) 
+                        except Exception as e:
+                            print(str(e))
+
+                self.cursor.execute(f"UPDATE tblMULTA SET ESTADO='ENTREGADO' WHERE ID_MULTA={self.value_to_table.get()}")
+
+                self.cursor.commit()
+
+                self.cursor.execute(f"SELECT * FROM tblMULTA WHERE ESTADO='PENDIENTE';")
+                self.row_to_list = [row for row in self.cursor]
+
+                if self.row_to_list == []:
+                    self.text_box.delete(1.0, END)
+                    self.cursor.execute(f"SELECT * FROM tblMULTA")
+                    for column in self.cursor.description:
+                        self.text_box.insert(END, str(column[0]) + " | ")
+
+                    self.row_to_list = [row for row in self.cursor]
+
+                    for item in self.row_to_list:
+                        try:
+                            self.text_box.insert(END, "\n"+str(item)) 
+                        except Exception as e:
+                            print(str(e))
+
+                else:
+                    self.text_box.delete(1.0, END)
+                
+                    self.cursor.execute(f"SELECT * FROM tblMULTA WHERE ESTADO='PENDIENTE';")
+                    self.row_to_list = [row for row in self.cursor]
+                    if self.row_to_list != []:
+                        self.text_box.delete(1.0, END)
+                        for column in self.cursor.description:
+                            self.text_box.insert(END, str(column[0]) + " | ")
+
+                        for item in self.row_to_list:
+                            try:
+                                self.text_box.insert(END, "\n"+str(item)) 
+                            except Exception as e:
+                                print(str(e))
+
+            else:
+                raise Exception
+
+        except Exception as e:
+            # print(e)
+            messagebox.showinfo(message=f"Valor no valido")
+
+
 
 
 
