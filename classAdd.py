@@ -1190,14 +1190,7 @@ class Usuarios:
                 self.list_of_column_to_insert_value.append("ID_USUARIO")
 
             if self.contador < self.quantity_columns:
-                # self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
-                # self.label1.update()
 
-                # if str(self.clean_row_list[self.contador + 1]) in self.null_columns:
-                #     self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]} (valor opcional)")
-                #     self.label1.update()
-
-                # else:
                 self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
                 self.label1.update()              
 
@@ -1208,28 +1201,6 @@ class Usuarios:
 
             if self.number_of_column_to_insert <= self.quantity_columns:
                 if self.contador <= self.quantity_columns:
-
-                    # if self.contador == 1:
-
-                    #     self.cursor.execute("SELECT USUARIO FROM tblLIBRO")
-                    #     self.z = [row for row in self.cursor]
-                    #     self.w = []
-
-                    #     for item in self.z:
-                    #         self.var = item[0]
-                    #         self.lower = self.var.casefold()
-                    #         self.w.append(self.lower)
-
-                    #     self.lower_entry = self.value_to_table.get()
-
-                    #     if self.lower_entry.casefold() in self.w:
-                    #         raise Exception("Ya existe")
-                        
-                    #     else:
-                    #         self.upper_case = self.value_to_table.get()
-                    #         self.list_of_values_to_insert.append(self.upper_case.upper())
-
-                    # else:
 
                     self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
                     self.list_of_values_to_insert.append(self.value_to_table.get())
@@ -1253,7 +1224,6 @@ class Usuarios:
 
 
                 print(f"INSERT INTO tblUSUARIO ( ID_USUARIO, NOMBRE, APELLIDO_PAT, APELLIDO_MAT, DIRECCION, CORREO, CODIGO_POSTAL, TELEFONO, ID_CATUSUARIO, EDAD) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", (self.list_of_values_to_insert[0], self.list_of_values_to_insert[1], self.list_of_values_to_insert[2], self.list_of_values_to_insert[3], self.list_of_values_to_insert[4], self.list_of_values_to_insert[5], self.list_of_values_to_insert[6], self.list_of_values_to_insert[7], self.list_of_values_to_insert[8], self.list_of_values_to_insert[9]))
-                # self.cursor.commit()
                 self.cursor.execute(f"INSERT INTO tblUSUARIO ( ID_USUARIO, NOMBRE, APELLIDO_PAT, APELLIDO_MAT, DIRECCION, CORREO, CODIGO_POSTAL, TELEFONO, ID_CATUSUARIO, EDAD) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", (self.list_of_values_to_insert[0], self.list_of_values_to_insert[1], self.list_of_values_to_insert[2], self.list_of_values_to_insert[3], self.list_of_values_to_insert[4], self.list_of_values_to_insert[5], self.list_of_values_to_insert[6], self.list_of_values_to_insert[7], self.list_of_values_to_insert[8], self.list_of_values_to_insert[9]))
                 self.cursor.commit()
 
@@ -1298,7 +1268,7 @@ class Usuarios:
             self.contador = 1
 
     def new_id_autor(self):
-        # Le asignamos el siguiente ID_PRESTAMO que este disponible
+        # Le asignamos el siguiente ID_USUARIO que este disponible
         self.cursor.execute("SELECT TOP 1 ID_USUARIO FROM tblUSUARIO ORDER BY ID_USUARIO DESC;")
         self.value_returned = [row for row in self.cursor]
         self.list_of_values_to_insert.append(self.value_returned[0][0] + 1)
