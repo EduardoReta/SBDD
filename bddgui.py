@@ -11,6 +11,7 @@ from rich.console import Console
 
 from classAdd import *
 from classShow import *
+from classModify import *
 
 class GUI:
 
@@ -46,7 +47,7 @@ class GUI:
         self.add_button = Button(self.master, text= "Delete")
         self.add_button.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-        self.modify_button = Button(self.master, text="Modify") 
+        self.modify_button = Button(self.master, text="Modify", command=self.modify_window) 
         self.modify_button.place(relx=0.5, rely=0.7, anchor=CENTER)
 
     def show_window(self) -> None:
@@ -57,9 +58,9 @@ class GUI:
         self.add_Window = tk.Toplevel(self.master)
         self.app2 = Add(self.add_Window, self.cursor)#, self.cursor)
 
-
-
-        
+    def modify_window(self) -> None:
+        self.modify_Window = tk.Toplevel(self.master)
+        self.app3 = Modify(self.modify_Window, self.cursor)
 
 
 
