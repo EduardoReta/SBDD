@@ -609,31 +609,9 @@ VALUES (
 	2008
 )
 
+UPDATE tblAUTOR SET NOMBRES = 'Eduardo' WHERE ID_AUTOR = 111
 SELECT * FROM tblAUTOR
 
-
--- Multas
-
--- CREATE TABLE tblMULTAS ( --FIXME: Agregar costo de la multa.
--- 						 --FIXME: Queda pendiente, checar como sacar el costo del retraso.
--- 	ID_MULTAS SMALLINT NOT NULL PRIMARY KEY,
--- 	DIAS_RETRASO TINYINT NULL, --opcional
-
--- 	ID_EMPLEADO SMALLINT NOT NULL,
--- 	ID_PRESTAMO SMALLINT NOT NULL,
--- 	ID_LIBRO SMALLINT FOREIGN KEY REFERENCES tblLIBRO(ID_LIBRO),
--- 	ID_USUARIO SMALLINT NOT NULL,	 
--- )
-
--- SELECT * FROM tblMULTAS
--- DROP TABLE tblMULTAS
--- INSERT INTO tblMULTAS 
--- VALUES (
--- 	17001,
-	
-
-
--- )
 
 SELECT ID_LIBRO FROM tblLIBRO;
 
