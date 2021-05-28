@@ -50,6 +50,9 @@ class GUI:
         self.modify_button = Button(self.master, text="Modify", command=self.modify_window) 
         self.modify_button.place(relx=0.5, rely=0.7, anchor=CENTER)
 
+        self.delete_button = Button(self.master, text="Delete", command=self.delete_window)
+        self.modify_button.place(relx=0.5, rely=0.7, anchor=CENTER)
+
     def show_window(self) -> None:
         self.show_Window = tk.Toplevel(self.master)
         self.app = Show(self.show_Window, self.cursor)
@@ -61,6 +64,10 @@ class GUI:
     def modify_window(self) -> None:
         self.modify_Window = tk.Toplevel(self.master)
         self.app3 = Modify(self.modify_Window, self.cursor)
+
+    def delete_window(self) -> None:
+        self.delete_Window = tk.Toplevel(self.master)
+        self.app4 = Delete(self.delete_Window, self.cursor)
 
 
 
