@@ -1,9 +1,12 @@
+import traceback
 import re
 from tkinter import *
 from rich.console import Console
 from rich import style
 from tkinter import ttk
 import tkinter as tk
+from tkinter import messagebox
+
 
 class Show:
 
@@ -26,13 +29,6 @@ class Show:
                 if re.search('tbl\w+', y):
                     self.clean_row_list.append(y)
 
-        self.label1 = Label(self.master, text="Lista de tablas.")
-        self.label1.pack()
-
-        self.db_tables = ttk.Combobox(self.master, state='readonly')
-        self.db_tables['values'] = self.clean_row_list
-        self.db_tables.current(0)
-        self.db_tables.pack()
 
         self.label2 = Label(self.master, text="Mostrar columnas de tabla: ")
         self.label2.pack()
@@ -41,7 +37,9 @@ class Show:
         self.db_input = Entry(self.master, textvariable=self.v)
         self.db_input.pack()
 
-        self.button1 = Button(self.master, text="Aceptar", command=self.get_var_value)#, command=lambda : self.button_pressed.set("button pressed"))
+        self.v.trace("w", self.validate1)
+
+        self.button1 = Button(self.master, text="Aceptar", command=self.get_var_value, state='disabled')#, command=lambda : self.button_pressed.set("button pressed"))
         self.button1.pack()
 
         self.labelCENTER = Label(self.master, text="Mostrar columna: ")
@@ -58,8 +56,12 @@ class Show:
         self.table_input = Entry(self.master, textvariable=self.table_value)
         self.table_input.pack()
 
-        self.button2 = Button(self.master, text="Mostrar", command=self.show_data)
+        self.button2 = Button(self.master, text="Mostrar", command=self.show_data, state="disabled")
         self.button2.pack()
+
+        self.column.trace("w", self.validate2)
+        self.table_value.trace("w", self.validate2)
+
 
         self.label5= Label(self.master, text="Mostrar tabla: ")
         self.label5.pack()
@@ -68,40 +70,182 @@ class Show:
         self.show_table_input = Entry(self.master, textvariable=self.show_table_value)
         self.show_table_input.pack()
 
-        self.button3 = Button(self.master, text="Mostrar", command=self.show_table)
+        self.button3 = Button(self.master, text="Mostrar", command=self.show_table, state="disabled")
         self.button3.pack()
+
+        self.show_table_value.trace("w", self.validate3)
+
 
         self.text_box = Text(self.master, width=500, height=300)
         self.text_box.pack()
 
+        self.text_box.delete(1.0, END)
+        self.text_box.insert(END, "Tablas a modificar:\n")
+        for item in self.clean_row_list:
+            self.text_box.insert(END, "\t"+item[3:]+"\n")
+
     # Muestra las columnas y los registros.
     def show_table(self) -> None:
-        self.text_box.delete(1.0, END)
-        self.cursor.execute(f"SELECT * FROM {self.show_table_value.get()}")
-        for column in self.cursor.description:
-            self.text_box.insert(END, str(column[0]) + " | ")
-        self.row_to_list = [row for row in self.cursor]
 
-        for item in self.row_to_list:
-            self.text_box.insert(END, "\n"+str(item)) 
+        try:
+            if self.show_table_value.get() == "":
+                raise Exception
+
+            print(self.show_table_value.get())
+
+            self.val = self.show_table_value.get()
+            self.upper_val = str(self.val).upper()
+            self.tbl_upper_val = "tbl"+self.upper_val
+
+
+            self.text_box.delete(1.0, END)
+            self.cursor.execute(f"SELECT * FROM {self.tbl_upper_val}")
+            for column in self.cursor.description:
+                self.text_box.insert(END, str(column[0]) + " | ")
+            self.row_to_list = [row for row in self.cursor]
+
+            for item in self.row_to_list:
+                self.text_box.insert(END, "\n"+str(item)) 
+
+            
+
+        except:
+            # raise Exception
+            messagebox.showinfo(message=f"Valor no valido")
 
 
     # Mostramos contenido de columna de acuerdo a la tabla y columna que se inserte
     def show_data(self) -> None:
 
-        self.text_box.delete(1.0, END)
-        self.cursor.execute(f"SELECT {self.column.get()} FROM {self.table_value.get()};")
-        self.row_to_list = [row for row in self.cursor]
-        self.text_box.insert(END, self.column.get()+"\n")
-        for item in self.row_to_list:
-            self.text_box.insert(END, str(item[0])+"\n")
-        
+        try:
+            # print("ESTO", self.upper, self.upper_col)
+
+            if self.column.get() == "" or self.table_value.get() == "":
+                raise Exception
+            
+            if type(self.column.get()) == int or type(self.table_value.get()) == int:
+                raise Exception
+
+
+            
+
+            self.tbl_value = self.table_value.get()
+            self.upper_tbl_value = str(self.tbl_value).upper()
+            self.upper = "tbl"+self.upper_tbl_value
+
+            self.col_val = self.column.get()
+            self.upper_col = str(self.col_val).upper()
+
+            self.clean_row_list1 = []
+
+            self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{str(self.upper)}'")
+            self.row_to_list1 = [row for row in self.cursor]
+
+
+            for item in self.row_to_list1:
+                self.clean_row_list1.append(item[3])
+
+
+            # for item in self.row_to_list1:
+            #     self.text_box.insert(END, str(item[3])+"\n")
+
+            print("estoo", self.clean_row_list1)
+
+            if str(self.upper_col) not in self.clean_row_list1:
+                raise Exception
+
+
+
+
+            self.text_box.delete(1.0, END)
+            self.cursor.execute(f"SELECT {self.upper_col} FROM {self.upper};")
+            self.row_to_list = [row for row in self.cursor]
+            self.text_box.insert(END, self.upper_col+"\n \n")
+            for item in self.row_to_list:
+                self.text_box.insert(END, str(item[0])+"\n")
+
+            self.column_selected.delete(0, 'end')    
+
+            self.table_input.delete(0, 'end')
+
+
+        except:
+            messagebox.showinfo(message=f"Valor no valido")
+            print(traceback.format_exc())
+            self.value_of_id.delete(0, 'end')
+
+            # self.column_selected.delete(0, 'end')    
+
+            # self.table_input.delete(0, 'end')
+
 
     # Mostramos columnas de tabla que se inserte
     def get_var_value(self) -> None:
 
-        self.text_box.delete(1.0, END)
-        self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{str(self.v.get())}'")
-        self.row_to_list = [row for row in self.cursor]
-        for item in self.row_to_list:
-            self.text_box.insert(END, str(item[3])+"\n")
+        try:
+
+            if self.v.get() == "":
+                raise Exception
+
+            if type(self.v.get()) == int:
+                raise Exception
+            
+
+            self.string = self.v.get()
+            self.upper_tbl = "tbl"+self.string.upper()
+            print(self.upper_tbl)
+
+            self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'tbl%'")
+            
+            self.row_to_list = [row for row in self.cursor]
+
+            # Lista con el nombre de las puras tablas
+            self.clean_row_list = []
+
+            for x in self.row_to_list:
+                for y in x:
+                    if re.search('tbl\w+', y):
+                        self.clean_row_list.append(y)
+
+            print(self.clean_row_list)
+
+            if self.upper_tbl not in self.clean_row_list:
+                raise Exception
+
+            self.text_box.delete(1.0, END)
+            try:
+                    self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{str(self.upper_tbl)}'")
+                    self.row_to_list = [row for row in self.cursor]
+
+            except:
+                    raise Exception
+
+            for item in self.row_to_list:
+                self.text_box.insert(END, str(item[3])+"\n")
+
+        except:
+            messagebox.showinfo(message=f"Valor no valido")
+            # print(traceback.format_exc())
+
+
+    def validate1(self, *args):
+        if self.v.get():
+            self.button1.config(state="normal")
+
+        else:
+            self.button1.config(state="disabled")
+
+    def validate2(self, *args):
+        if self.column.get() and self.table_value.get():
+            self.button2.config(state="normal")
+
+        else:
+            self.button2.config(state="disabled")
+
+    def validate3(self, *args):
+
+        if self.show_table_value.get():
+            self.button3.config(state="normal")
+        
+        else:
+            self.button3.config(state="disabled")

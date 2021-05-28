@@ -4,14 +4,12 @@ import pyodbc
 from tkinter import ttk
 import tkinter as tk
 from tkinter.messagebox import showinfo
-import re
-from functools import partial
-from rich import style
-from rich.console import Console
+
 
 from classAdd import *
 from classShow import *
 from classModify import *
+from classDelete import *
 
 class GUI:
 
@@ -41,17 +39,14 @@ class GUI:
         self.search_button = Button(self.master, text="Search", command=self.show_window)
         self.search_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-        self.delete_button = Button(self.master, text="Add", command=self.add_window)
-        self.delete_button.place(relx=0.5, rely=0.3, anchor=CENTER)
-
-        self.add_button = Button(self.master, text= "Delete")
-        self.add_button.place(relx=0.5, rely=0.5, anchor=CENTER)
+        self.add_button = Button(self.master, text="Add", command=self.add_window)
+        self.add_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
         self.modify_button = Button(self.master, text="Modify", command=self.modify_window) 
-        self.modify_button.place(relx=0.5, rely=0.7, anchor=CENTER)
+        self.modify_button.place(relx=0.5, rely=0.5, anchor=CENTER)
 
         self.delete_button = Button(self.master, text="Delete", command=self.delete_window)
-        self.modify_button.place(relx=0.5, rely=0.7, anchor=CENTER)
+        self.delete_button.place(relx=0.5, rely=0.7, anchor=CENTER)
 
     def show_window(self) -> None:
         self.show_Window = tk.Toplevel(self.master)
@@ -59,7 +54,7 @@ class GUI:
 
     def add_window(self) -> None:
         self.add_Window = tk.Toplevel(self.master)
-        self.app2 = Add(self.add_Window, self.cursor)#, self.cursor)
+        self.app2 = Add(self.add_Window, self.cursor)
 
     def modify_window(self) -> None:
         self.modify_Window = tk.Toplevel(self.master)
