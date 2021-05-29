@@ -24,7 +24,9 @@ class Modify:
         self.insert_value = Entry(self.master, textvariable=self.value_to_table)
         self.insert_value.pack()
 
-        self.users_button = Button(self.master, text="Aceptar", command=self.modify_actions)
+        self.value_to_table.trace("w", self.validate1)
+
+        self.users_button = Button(self.master, text="Aceptar", command=self.modify_actions, state="disabled")
         self.users_button.pack()
         
         self.label1 = Label(self.master, text="ID:")
@@ -39,6 +41,7 @@ class Modify:
         self.label2 = Label(self.master, text="Columna:")
         self.label2.pack()
 
+
         self.value_of_column = StringVar()
         self.insert_value_column = Entry(self.master, textvariable=self.value_of_column)
         self.insert_value_column.pack()
@@ -48,7 +51,7 @@ class Modify:
 
         self.label3 = Label(self.master, text="Valor a insertar:")
         self.label3.pack()
-
+        
         self.value_to_insert = StringVar()
         self.value_entry = Entry(self.master, textvariable=self.value_to_insert)
         self.value_entry.pack()
@@ -78,8 +81,6 @@ class Modify:
         self.text_box.insert(END, "Tablas a modificar:\n")
         for item in self.clean_row_list:
             self.text_box.insert(END, "\t"+item+"\n")
-
-
 
 
     def modify_actions(self):
@@ -164,23 +165,6 @@ class Modify:
                     except Exception as e:
                         print(str(e))
             
-
-            # elif self.value_with_tbl == "tblPRESTAMO":
-            #     print("Es prestamo")
-            #     self.text_box.delete(1.0, END)
-
-            #     self.cursor.execute(f"SELECT * FROM tblPRESTAMO")
-            #     for column in self.cursor.description:
-            #         self.text_box.insert(END, str(column[0]) + " | ")
-
-            #     self.row_to_list = [row for row in self.cursor]
-
-            #     for item in self.row_to_list:
-            #         try:
-            #             self.text_box.insert(END, "\n"+str(item)) 
-            #         except Exception as e:
-            #             print(str(e))
-
             else:
                 raise Exception
 
@@ -214,9 +198,13 @@ class Modify:
                     self.clean_x.append(item[0])
                 
                 if int(self.insert_value_id.get()) in self.clean_x:
-                    print("Se encuentra el valor en tabla")
+                    print("Se encuentra el id en tabla")
                 
                 else:
+                    raise Exception
+
+
+                if self.value_to_insert.get().isdigit() == True:
                     raise Exception
 
                 # Obtener nombres de columnas
@@ -308,13 +296,30 @@ class Modify:
                 except Exception as e:
                     print(e)
 
-                print(f"UPDATE tblLIBRO SET {self.upper_column}='{self.value_to_insert.get()}' WHERE ID_LIBRO={int(self.value_of_id.get())}")
-                self.cursor.execute(f"UPDATE tblLIBRO SET {self.upper_column}='{self.value_to_insert.get()}' WHERE ID_LIBRO={int(self.value_of_id.get())}")
-                self.cursor.commit()
+                if self.upper_column == "TITULO":
+
+                    self.val = self.value_to_insert.get()
+                    self.upper_val = str(self.val).upper()
+
+
+                    print(f"UPDATE tblLIBRO SET {self.upper_column}='{self.upper_val}' WHERE ID_LIBRO={int(self.value_of_id.get())}")
+                    self.cursor.execute(f"UPDATE tblLIBRO SET {self.upper_column}='{self.upper_val}' WHERE ID_LIBRO={int(self.value_of_id.get())}")
+                    self.cursor.commit()
+
+                else:
+                    print(f"UPDATE tblLIBRO SET {self.upper_column}='{self.value_to_insert.get()}' WHERE ID_LIBRO={int(self.value_of_id.get())}")
+                    self.cursor.execute(f"UPDATE tblLIBRO SET {self.upper_column}='{self.value_to_insert.get()}' WHERE ID_LIBRO={int(self.value_of_id.get())}")
+                    self.cursor.commit()
+
+                
+
+
                 print(self.upper_column, self.value_to_insert.get(), self.value_of_id.get())
 
 
                 self.text_box.delete(1.0, END)
+
+
 
                 self.cursor.execute(f"SELECT * FROM tblLIBRO")
                 for column in self.cursor.description:
@@ -331,67 +336,6 @@ class Modify:
                 if (self.value_to_table  == "") or (self.value_of_column == "") or (self.value_of_id == ""):
                     raise Exception
 
-
-            # '''
-            # Prestamos
-            # '''
-            # if self.value_with_tbl == "tblPRESTAMO":
-            #     print("entro autor")
-
-            #     self.cursor.execute("SELECT ID_PRESTAMO FROM tblPRESTAMO")
-            #     self.x = [row for row in self.cursor]
-            #     self.clean_x = []
-
-            #     for item in self.x:
-            #         self.clean_x.append(item[0])
-                
-            #     if int(self.insert_value_id.get()) in self.clean_x:
-            #         print("Se encuentra el valor en tabla")
-                
-            #     else:
-            #         raise Exception
-
-            #     # Obtener nombres de columnas
-            #     self.cursor.execute(f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'tblPRESTAMO'")
-            #     self.row_to_list = [row for row in self.cursor]
-            #     self.clean_row_list = []
-            #     for item in self.row_to_list:
-            #         self.clean_row_list.append(item[3])
-
-            #     print(self.clean_row_list)
-
-            #     self.column = self.value_of_column.get()
-            #     self.upper_column = self.column.upper()
-
-            #     try:
-            #         if self.upper_column in self.clean_row_list:
-            #             print("si se encuentra la columna")
-            #             print(self.upper_column)
-                    
-            #         else:
-            #             print("No se encuentras")
-            #     except Exception as e:
-            #         print(e)
-
-            #     print(f"UPDATE tblPRESTAMO SET {self.upper_column}='{self.value_to_insert.get()}' WHERE ID_PRESTAMO={int(self.value_of_id.get())}")
-            #     self.cursor.execute(f"UPDATE tblPRESTAMO SET {self.upper_column}='{self.value_to_insert.get()}' WHERE ID_PRESTAMO={int(self.value_of_id.get())}")
-            #     self.cursor.commit()
-            #     print(self.upper_column, self.value_to_insert.get(), self.value_of_id.get())
-
-
-            #     self.text_box.delete(1.0, END)
-
-            #     self.cursor.execute(f"SELECT * FROM tblPRESTAMO")
-            #     for column in self.cursor.description:
-            #         self.text_box.insert(END, str(column[0]) + " | ")
-
-            #     self.row_to_list = [row for row in self.cursor]
-
-            #     for item in self.row_to_list:
-            #         try:
-            #             self.text_box.insert(END, "\n"+str(item)) 
-            #         except Exception as e:
-            #             print(str(e)) 
 
 
             '''
@@ -466,6 +410,8 @@ class Modify:
             if self.value_with_tbl == "tblDONACION":
                 print("entro autor")
 
+
+
                 self.cursor.execute("SELECT ID_DONACION FROM tblDONACION")
                 self.x = [row for row in self.cursor]
                 self.clean_x = []
@@ -522,13 +468,17 @@ class Modify:
                         print(str(e))
 
                 if (self.value_to_table  == "") or (self.value_of_column == "") or (self.value_of_id == ""):
-                    raise Exception                       
+                    raise Exception   
+
+            self.value_entry.delete(0, 'end')
+            self.insert_value_id.delete(0, 'end')
+            self.insert_value_column.delete(0, 'end')                    
 
    
         except:
             messagebox.showinfo(message=f"Valor no valido")
             # print(traceback.format_exc())
-            self.value_of_id.delete(0, 'end')
+            self.insert_value_id.delete(0, 'end')
             self.insert_value_column.delete(0, 'end')
             self.value_entry.delete(0, 'end')
 
@@ -539,16 +489,26 @@ class Modify:
         if self.value_of_id.get():
             # self.id_button.config(state="normal")
             self.ones.append("1")
+            
+
 
         if self.value_of_column.get():
             self.ones.append("1")
 
+            
+
+
         if self.value_to_insert.get():
             self.ones.append("1")
+
+            
+
 
         if len(self.ones) == 3:
             self.id_button.config(state="normal")
             self.ones = []
+        else:
+            self.id_button.config(state="disabled")
 
 
 #FIXME : VER FORMA DE HASTA QUE SE LLENEN PERMITIR PICARLE ACEPTAR
@@ -557,3 +517,10 @@ class Modify:
         if self.value_of_column.get():
             print("Si hay valor")
             # self.id_button.config(state="normal")
+
+    def validate1(self, *args):
+        if self.value_to_table.get():
+            self.users_button.config(state="normal")
+
+        else:
+            self.users_button.config(state="disable")

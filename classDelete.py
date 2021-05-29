@@ -1,12 +1,7 @@
 import traceback
 import tkinter as tk
 from tkinter import messagebox
-import re
 from tkinter import *
-from rich.console import Console
-from rich import style, text
-from datetime import datetime, timedelta, date
-import time
 
 
 class Delete:
@@ -25,8 +20,11 @@ class Delete:
         self.insert_value = Entry(self.master, textvariable=self.value_to_table)
         self.insert_value.pack()
 
-        self.users_button = Button(self.master, text="Aceptar", command=self.modify_actions)
+        self.users_button = Button(self.master, text="Aceptar", command=self.modify_actions, state='disabled')
         self.users_button.pack()
+
+        self.value_to_table.trace("w", self.validate1)
+
         
         self.label1 = Label(self.master, text="ID:")
         self.label1.pack()
@@ -293,6 +291,7 @@ class Delete:
                 self.cursor.execute(f"DELETE FROM tblUSUARIO WHERE ID_USUARIO={self.value_of_id.get()}")
                 self.cursor.commit()
 
+
                 self.text_box.delete(1.0, END)
 
                 self.cursor.execute(f"SELECT * FROM tblUSUARIO")
@@ -381,9 +380,7 @@ class Delete:
 
             else:
                 raise Exception
-            
-
-                
+               
 
         except:
             messagebox.showinfo(message=f"Valor no valido")
@@ -402,3 +399,23 @@ class Delete:
         if len(self.ones) == 1:
             self.id_button.config(state="normal")
             self.ones = []
+
+        else:
+            self.id_button.config(state="disabled")
+
+
+    def validate1(self, *args):
+
+        self.ones1 = []
+        if self.value_to_table.get():
+            # self.id_button.config(state="normal")
+            self.ones1.append("1")
+
+
+        if len(self.ones1) == 1:
+            self.users_button.config(state="normal")
+            self.ones1 = []
+
+        else:
+            self.users_button.config(state="disabled")
+

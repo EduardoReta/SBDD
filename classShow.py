@@ -1,9 +1,6 @@
 import traceback
 import re
 from tkinter import *
-from rich.console import Console
-from rich import style
-from tkinter import ttk
 import tkinter as tk
 from tkinter import messagebox
 
@@ -75,6 +72,14 @@ class Show:
 
         self.show_table_value.trace("w", self.validate3)
 
+        self.label6 = Label(self.master, text="---------------------")
+        self.label6.pack()
+
+        self.button4 = Button(self.master, text="Ver Catalogos", command=self.catalogos)#E, command=self.show_table)
+        self.button4.pack()
+
+        self.button5 = Button(self.master, text="Ver Tablas", command=self.tablas)
+        self.button5.pack()
 
         self.text_box = Text(self.master, width=500, height=300)
         self.text_box.pack()
@@ -88,6 +93,7 @@ class Show:
     def show_table(self) -> None:
 
         try:
+            self.text_box.delete(1.0, END)
             if self.show_table_value.get() == "":
                 raise Exception
 
@@ -97,17 +103,13 @@ class Show:
             self.upper_val = str(self.val).upper()
             self.tbl_upper_val = "tbl"+self.upper_val
 
-
-            self.text_box.delete(1.0, END)
             self.cursor.execute(f"SELECT * FROM {self.tbl_upper_val}")
             for column in self.cursor.description:
                 self.text_box.insert(END, str(column[0]) + " | ")
             self.row_to_list = [row for row in self.cursor]
 
             for item in self.row_to_list:
-                self.text_box.insert(END, "\n"+str(item)) 
-
-            
+                self.text_box.insert(END, "\n"+str(item))
 
         except:
             # raise Exception
@@ -171,12 +173,12 @@ class Show:
 
         except:
             messagebox.showinfo(message=f"Valor no valido")
-            print(traceback.format_exc())
-            self.value_of_id.delete(0, 'end')
+            # print(traceback.format_exc())
 
-            # self.column_selected.delete(0, 'end')    
-
-            # self.table_input.delete(0, 'end')
+            self.db_input.delete(0, END)
+            self.column_selected.delete(0, END)
+            self.table_input.delete(0, END)
+            self.show_table_input.delete(0, END)
 
 
     # Mostramos columnas de tabla que se inserte
@@ -225,7 +227,6 @@ class Show:
 
         except:
             messagebox.showinfo(message=f"Valor no valido")
-            # print(traceback.format_exc())
 
 
     def validate1(self, *args):
@@ -249,3 +250,46 @@ class Show:
         
         else:
             self.button3.config(state="disabled")
+
+
+    def catalogos(self):
+        self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'cat%'")
+        
+        self.row_to_list = [row for row in self.cursor]
+
+        # Lista con el nombre de las puras tablas
+        self.clean_row_list = []
+
+        for x in self.row_to_list:
+            for y in x:
+                if re.search('cat\w+', y):
+                    self.clean_row_list.append(y)
+
+
+        self.text_box.delete(1.0, END)
+        for item in self.clean_row_list:
+            self.cursor.execute(f"SELECT * FROM {item}")
+            self.text_box.insert(END, str(item)+"\n")
+            for row in self.cursor:
+                self.text_box.insert(END, str(row)+"\n")
+            self.text_box.insert(END, "\n")
+
+
+    def tablas(self):
+        self.cursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'tbl%'")
+        
+        self.row_to_list = [row for row in self.cursor]
+
+        # Lista con el nombre de las puras tablas
+        self.clean_row_list = []
+
+        for x in self.row_to_list:
+            for y in x:
+                if re.search('tbl\w+', y):
+                    self.clean_row_list.append(y)
+
+
+        self.text_box.delete(1.0, END)
+        self.text_box.insert(END, "Tablas:\n")
+        for item in self.clean_row_list:
+            self.text_box.insert(END, "\t"+item+"\n")

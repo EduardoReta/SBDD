@@ -328,10 +328,7 @@ class Autor:
         self.insert_value.pack()
 
         self.execute_insert = Button(self.master, text="Aceptar", command=self.insert_value_query)#, self. )
-        self.execute_insert.pack()
-
-        self.null_button = Button(self.master, text="Sin Valor", command=self.null_value)#, self. )
-        self.null_button.pack()        
+        self.execute_insert.pack()    
 
         self.text_box = Text(self.master, width=500, height=500)
         self.text_box.pack()
@@ -405,92 +402,103 @@ class Autor:
 
     def insert_value_query(self):
 
-        self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
-        self.value_returned = [row for row in self.cursor]
-        x = self.value_returned[0][0] + 1
+        try:
 
-        if x not in self.list_of_values_to_insert:
-            self.new_id_autor()
+            if self.value_to_table.get() == "":
+                raise Exception
 
+            if any(i.isdigit() for i in self.value_to_table.get()):
+                print("ES NUMERO")
+                raise Exception
 
-        if "ID_AUTOR" not in self.list_of_column_to_insert_value:
-            self.list_of_column_to_insert_value.append("ID_AUTOR")
+            self.cursor.execute("SELECT TOP 1 ID_AUTOR FROM tblAUTOR ORDER BY ID_AUTOR DESC;")
+            self.value_returned = [row for row in self.cursor]
+            x = self.value_returned[0][0] + 1
 
-        if self.contador < self.quantity_columns:
-            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
-            self.label1.update()
-
-        elif self.contador == self.quantity_columns:
-            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador]}")
-            self.label1.update()
-
-        if self.number_of_column_to_insert <= self.quantity_columns:
-            if self.contador <= self.quantity_columns:
-                self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
-                self.list_of_values_to_insert.append(self.value_to_table.get())
-
-                self.console.print("Lista valores columna" + str(self.list_of_column_to_insert_value), style='red')
-                self.console.print("Lista valores " + str(self.list_of_values_to_insert), style='blue')
-                self.console.print("Numero de columna a insertar " + str(self.number_of_column_to_insert), style='green')
-                self.console.print("Cantidad de columnas " + str(self.quantity_columns), style='yellow')
-                self.console.print("Contador " + str(self.contador), style='bold red')
-                print("-"*50)
-
-        # Cuando se inserte el ultimo valor haga lo siguiente
-        if self.number_of_column_to_insert == self.quantity_columns:
-
-            # Reiniciar valores para que puedan volver a introducir registros
-            self.contador = 0
-            self.number_of_column_to_insert = 1
-            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
-
-            # En teoria quedaria si:
-            #   self.list_of_column_to_insert_value = ['ID_AUTOR', 'NOMBRE', 'APELLIDO_PAT', 'APELLIDO_MAT'] Esto no -> , 'DIA_PUBLICACION', 'MES_PUBLICACION', 'AÑO_PUBLICACION']
-            #   self.list_of_values_to_insert) = [valor0, valor1, valor2, valor3]  Esto no -> , valor4, valor5, valor6]
-
-            self.cursor.execute(f"INSERT INTO tblAUTOR ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}')")
-            self.cursor.commit()
-
-            # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
-            self.text_box.delete(1.0, END)
-            self.cursor.execute(f"SELECT * FROM tblAUTOR")
-            for column in self.cursor.description:
-                self.text_box.insert(END, str(column[0]) + " | ")
-
-            self.row_to_list = [row for row in self.cursor]
-
-            for item in self.row_to_list:
-                try:
-                    self.text_box.insert(END, "\n"+str(item)) 
-                except Exception as e:
-                    print(str(e))
-            
-            # Reiniciar valores para que puedan volver a introducir registros
-            self.list_of_column_to_insert_value = []
-            self.list_of_values_to_insert = []
-            self.number_of_column_to_insert = 1
-            self.quantity_columns = len(self.clean_row_list) - 1
-            self.contador = 1
-                        
-        else:
-
-            # FIXME: Mandar mensaje si se inserto el ultimo valor de la tabla
-            # NOTE: No es necesario avisar ya que cuando se inserte el ultimo valor, se cambiara
-            #       el nombre del Label por el de la primera columna.
-            self.number_of_column_to_insert += 1
-            self.contador = self.contador + 1
-            self.insert_value.delete(0, 'end')
+            if x not in self.list_of_values_to_insert:
+                self.new_id_autor()
 
 
-    # Insertar "DEFAULT" como valor para dar valor nulo a columna dada 
-    def null_value(self):
-        self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador] )
-        self.list_of_values_to_insert.append("DEFAULT")
-        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
-        self.label1.update()
+            if "ID_AUTOR" not in self.list_of_column_to_insert_value:
+                self.list_of_column_to_insert_value.append("ID_AUTOR")
 
-        self.number_of_column_to_insert += 1
-        self.contador += 1
+            if self.contador < self.quantity_columns:
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
+                self.label1.update()
+
+            elif self.contador == self.quantity_columns:
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador]}")
+                self.label1.update()
+
+            if self.number_of_column_to_insert <= self.quantity_columns:
+                if self.contador <= self.quantity_columns:
+                    self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
+                    self.list_of_values_to_insert.append(self.value_to_table.get())
+
+                    self.console.print("Lista valores columna" + str(self.list_of_column_to_insert_value), style='red')
+                    self.console.print("Lista valores " + str(self.list_of_values_to_insert), style='blue')
+                    self.console.print("Numero de columna a insertar " + str(self.number_of_column_to_insert), style='green')
+                    self.console.print("Cantidad de columnas " + str(self.quantity_columns), style='yellow')
+                    self.console.print("Contador " + str(self.contador), style='bold red')
+                    print("-"*50)
+
+            # Cuando se inserte el ultimo valor haga lo siguiente
+            if self.number_of_column_to_insert == self.quantity_columns:
+
+                # Reiniciar valores para que puedan volver a introducir registros
+                self.contador = 0
+                self.number_of_column_to_insert = 1
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
+
+                # En teoria quedaria si:
+                #   self.list_of_column_to_insert_value = ['ID_AUTOR', 'NOMBRE', 'APELLIDO_PAT', 'APELLIDO_MAT'] Esto no -> , 'DIA_PUBLICACION', 'MES_PUBLICACION', 'AÑO_PUBLICACION']
+                #   self.list_of_values_to_insert) = [valor0, valor1, valor2, valor3]  Esto no -> , valor4, valor5, valor6]
+
+                self.cursor.execute(f"INSERT INTO tblAUTOR ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}')")
+                self.cursor.commit()
+
+                # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
+                self.text_box.delete(1.0, END)
+                self.cursor.execute(f"SELECT * FROM tblAUTOR")
+                for column in self.cursor.description:
+                    self.text_box.insert(END, str(column[0]) + " | ")
+
+                self.row_to_list = [row for row in self.cursor]
+
+                for item in self.row_to_list:
+                    try:
+                        self.text_box.insert(END, "\n"+str(item)) 
+                    except Exception as e:
+                        print(str(e))
+                
+                # Reiniciar valores para que puedan volver a introducir registros
+                self.list_of_column_to_insert_value = []
+                self.list_of_values_to_insert = []
+                self.number_of_column_to_insert = 1
+                self.quantity_columns = len(self.clean_row_list) - 1
+                self.contador = 1
+                            
+            else:
+
+                # FIXME: Mandar mensaje si se inserto el ultimo valor de la tabla
+                # NOTE: No es necesario avisar ya que cuando se inserte el ultimo valor, se cambiara
+                #       el nombre del Label por el de la primera columna.
+                self.number_of_column_to_insert += 1
+                self.contador = self.contador + 1
+                self.insert_value.delete(0, 'end')
+        except:
+                messagebox.showinfo(message=f"Valor no valido")
+                # print(traceback.format_exc())
+                self.list_of_column_to_insert_value = []
+                self.list_of_values_to_insert = []
+                self.number_of_column_to_insert = 1
+                self.quantity_columns = len(self.clean_row_list) - 1
+                self.contador = 1
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
+                self.insert_value.delete(0, 'end')
+
+
+
 
 
     def new_id_autor(self):
@@ -514,7 +522,7 @@ class Prestamos:
         self.label1 = Label(self.master, text="Insertar valor:")
         self.label1.pack()
 
-        self.value_to_table = StringVar()
+        self.value_to_table = IntVar()
         self.insert_value = Entry(self.master, textvariable=self.value_to_table)
         self.insert_value.pack()
 
@@ -592,97 +600,124 @@ class Prestamos:
 
     def insert_value_query(self):
 
-        self.cursor.execute("SELECT TOP 1 ID_PRESTAMO FROM tblPRESTAMO ORDER BY ID_PRESTAMO DESC;")
-        self.value_returned = [row for row in self.cursor]
-        x = self.value_returned[0][0] + 1
 
-        if x not in self.list_of_values_to_insert:
-            self.new_id_lending()
-
-        if "ID_PRESTAMO" not in self.list_of_column_to_insert_value:
-            self.list_of_column_to_insert_value.append("ID_PRESTAMO")
-
-        if self.contador < self.quantity_columns:
-            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
-            self.label1.update()
-
-        elif self.contador == self.quantity_columns:
-            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador]}")
-            self.label1.update()
+        try:
+            if self.value_to_table.get() == "":
+                raise Exception
 
 
-        if self.number_of_column_to_insert <= self.quantity_columns:
-            if self.contador <= self.quantity_columns:
-                self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
-                self.list_of_values_to_insert.append(self.value_to_table.get())
-
-                self.console.print("Lista valores columna" + str(self.list_of_column_to_insert_value), style='red')
-                self.console.print("Lista valores " + str(self.list_of_values_to_insert), style='blue')
-                self.console.print("Numero de columna a insertar " + str(self.number_of_column_to_insert), style='green')
-                self.console.print("Cantidad de columnas " + str(self.quantity_columns), style='yellow')
-                self.console.print("Contador " + str(self.contador), style='bold red')
-                print("-"*50)
-
-
-        # Cuando se inserte el ultimo valor haga lo siguiente
-        if self.number_of_column_to_insert == self.quantity_columns:
-
-            # Reiniciar valores para que puedan volver a introducir registros
-            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
-        
-
-            # Agregamos los ultimos dos elementos de la lista (FECHA_PRESTAMO Y FECHA_REGRESO)
-            self.list_of_column_to_insert_value.append(self.clean_row_list[-2])
-            self.list_of_column_to_insert_value.append(self.clean_row_list[-1])
-
-            # Obtener fecha al momento de prestarse
-            self.date_at_lending = datetime.today().strftime('%Y-%m-%d')
-
-            # Obtener fecha de regreso esperada (+3 dias)
-            self.date = datetime.strptime(self.date_at_lending, "%Y-%m-%d")
-            self.modified_date = self.date + timedelta(days=3)
-            self.date_at_return = datetime.strftime(self.modified_date, "%Y-%m-%d")
-
-            self.list_of_values_to_insert.append(self.date_at_lending)
-            self.list_of_values_to_insert.append(self.date_at_return)
-
-            print("*"*50)
-            print(self.list_of_column_to_insert_value)
-            print(self.list_of_values_to_insert)
-            # print(self.list_of_column_to_insert_value)
-            print(f"INSERT INTO tblPRESTAMO ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
-            # print(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
-
+            if str(self.value_to_table.get()).isdigit():
+                print("Son numeros")
             
-
-            self.cursor.execute("SELECT TOP 1 ID_DEVOLUCION FROM tblDEVOLUCION ORDER BY ID_DEVOLUCION DESC;")
+            else:
+                raise Exception
+        
+            self.cursor.execute("SELECT TOP 1 ID_PRESTAMO FROM tblPRESTAMO ORDER BY ID_PRESTAMO DESC;")
             self.value_returned = [row for row in self.cursor]
             x = self.value_returned[0][0] + 1
 
-            self.values_devolution.append(x)
+            if x not in self.list_of_values_to_insert:
+                self.new_id_lending()
 
-            self.cursor.execute(f"INSERT INTO tblPRESTAMO ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
-            self.cursor.commit()
+            if "ID_PRESTAMO" not in self.list_of_column_to_insert_value:
+                self.list_of_column_to_insert_value.append("ID_PRESTAMO")
 
-            # Creamos un registro de devolucion para este prestamo
-            print(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'DEFAULT', 'Pendiente')")
-            self.cursor.execute(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'None', 'PENDIENTE')")
-            self.cursor.commit()
-            # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
-            self.text_box.delete(1.0, END)
-            self.cursor.execute(f"SELECT * FROM tblPRESTAMO")
-            for column in self.cursor.description:
-                self.text_box.insert(END, str(column[0]) + " | ")
+            if self.contador < self.quantity_columns:
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
+                self.label1.update()
 
-            self.row_to_list = [row for row in self.cursor]
+            elif self.contador == self.quantity_columns:
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador]}")
+                self.label1.update()
 
-            for item in self.row_to_list:
-                try:
-                    self.text_box.insert(END, "\n"+str(item)) 
-                except Exception as e:
-                    print(str(e))
+
+            if self.number_of_column_to_insert <= self.quantity_columns:
+                if self.contador <= self.quantity_columns:
+                    self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador])
+                    self.list_of_values_to_insert.append(self.value_to_table.get())
+
+                    self.console.print("Lista valores columna" + str(self.list_of_column_to_insert_value), style='red')
+                    self.console.print("Lista valores " + str(self.list_of_values_to_insert), style='blue')
+                    self.console.print("Numero de columna a insertar " + str(self.number_of_column_to_insert), style='green')
+                    self.console.print("Cantidad de columnas " + str(self.quantity_columns), style='yellow')
+                    self.console.print("Contador " + str(self.contador), style='bold red')
+                    print("-"*50)
+
+
+            # Cuando se inserte el ultimo valor haga lo siguiente
+            if self.number_of_column_to_insert == self.quantity_columns:
+
+                # Reiniciar valores para que puedan volver a introducir registros
+                self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
             
-            # Reiniciar valores para que puedan volver a introducir registros
+
+                # Agregamos los ultimos dos elementos de la lista (FECHA_PRESTAMO Y FECHA_REGRESO)
+                self.list_of_column_to_insert_value.append(self.clean_row_list[-2])
+                self.list_of_column_to_insert_value.append(self.clean_row_list[-1])
+
+                # Obtener fecha al momento de prestarse
+                self.date_at_lending = datetime.today().strftime('%Y-%m-%d')
+
+                # Obtener fecha de regreso esperada (+3 dias)
+                self.date = datetime.strptime(self.date_at_lending, "%Y-%m-%d")
+                self.modified_date = self.date + timedelta(days=3)
+                self.date_at_return = datetime.strftime(self.modified_date, "%Y-%m-%d")
+
+                self.list_of_values_to_insert.append(self.date_at_lending)
+                self.list_of_values_to_insert.append(self.date_at_return)
+
+                print("*"*50)
+                print(self.list_of_column_to_insert_value)
+                print(self.list_of_values_to_insert)
+                # print(self.list_of_column_to_insert_value)
+                print(f"INSERT INTO tblPRESTAMO ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
+                # print(f"INSERT INTO tblPRESTAMOS ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
+
+                
+
+                self.cursor.execute("SELECT TOP 1 ID_DEVOLUCION FROM tblDEVOLUCION ORDER BY ID_DEVOLUCION DESC;")
+                self.value_returned = [row for row in self.cursor]
+                x = self.value_returned[0][0] + 1
+
+                self.values_devolution.append(x)
+
+                self.cursor.execute(f"INSERT INTO tblPRESTAMO ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}) VALUES ({str(self.list_of_values_to_insert[0])}, '{str(self.list_of_values_to_insert[1])}', '{str(self.list_of_values_to_insert[2])}', '{str(self.list_of_values_to_insert[3])}', '{str(self.list_of_values_to_insert[4])}', '{str(self.list_of_values_to_insert[5])}')")
+                self.cursor.commit()
+
+                # Creamos un registro de devolucion para este prestamo
+                print(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'DEFAULT', 'Pendiente')")
+                self.cursor.execute(f"INSERT INTO tblDEVOLUCION (ID_DEVOLUCION, ID_PRESTAMO, ID_USUARIO, FECHA_DEVOLUCION, ESTADO) VALUES ({self.values_devolution[0]}, {int(self.list_of_values_to_insert[0])}, {int(self.list_of_values_to_insert[2])}, 'None', 'PENDIENTE')")
+                self.cursor.commit()
+                # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
+                self.text_box.delete(1.0, END)
+                self.cursor.execute(f"SELECT * FROM tblPRESTAMO")
+                for column in self.cursor.description:
+                    self.text_box.insert(END, str(column[0]) + " | ")
+
+                self.row_to_list = [row for row in self.cursor]
+
+                for item in self.row_to_list:
+                    try:
+                        self.text_box.insert(END, "\n"+str(item)) 
+                    except Exception as e:
+                        print(str(e))
+                
+                # Reiniciar valores para que puedan volver a introducir registros
+                self.list_of_column_to_insert_value = []
+                self.list_of_values_to_insert = []
+                self.number_of_column_to_insert = 1
+                self.quantity_columns = len(self.clean_row_list) - 3
+                self.contador = 1
+                self.insert_value.delete(0, 'end')
+                self.values_devolution = []
+
+            else:
+                self.number_of_column_to_insert += 1
+                self.contador = self.contador + 1
+                self.insert_value.delete(0, 'end')
+
+        except:
+            messagebox.showinfo(message=f"Valor no valido")
             self.list_of_column_to_insert_value = []
             self.list_of_values_to_insert = []
             self.number_of_column_to_insert = 1
@@ -690,11 +725,8 @@ class Prestamos:
             self.contador = 1
             self.insert_value.delete(0, 'end')
             self.values_devolution = []
+            self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")  
 
-        else:
-            self.number_of_column_to_insert += 1
-            self.contador = self.contador + 1
-            self.insert_value.delete(0, 'end')
 
 
     def new_id_lending(self):
@@ -819,8 +851,8 @@ class Devolucion:
 
             # ID_PRESTAMO -> self.value_to_table.get()
             # NOTE: FECHA
-            # self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
-            self.date_at_devolution = "2021-05-29"
+            self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
+            # self.date_at_devolution = "2021-06-01"
             self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
             self.cursor.commit()
 
@@ -936,9 +968,11 @@ class Devolucion:
 
                 self.values_fine = []
                 self.id_dev_value = []
+            self.insert_value.delete(0, 'end')
 
         except Exception as e:
             messagebox.showinfo(message=f"Valor no valido")
+            self.insert_value.delete(0, 'end')
 
 
 class Multas:
