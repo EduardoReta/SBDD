@@ -1,10 +1,6 @@
-from os import closerange
 from tkinter import *
 import pyodbc
-from tkinter import ttk
 import tkinter as tk
-from tkinter.messagebox import showinfo
-
 
 from classAdd import *
 from classShow import *
@@ -33,19 +29,19 @@ class GUI:
 
         self.cursor = self.connection.cursor()
 
-        self.master.title("Interface of DB")
+        self.master.title("Interfaz de DB")
         self.master.geometry("300x200")
 
-        self.search_button = Button(self.master, text="Search", command=self.show_window)
+        self.search_button = Button(self.master, text="Mostrar", command=self.show_window)
         self.search_button.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-        self.add_button = Button(self.master, text="Add", command=self.add_window)
+        self.add_button = Button(self.master, text="Agregar", command=self.add_window)
         self.add_button.place(relx=0.5, rely=0.3, anchor=CENTER)
 
-        self.modify_button = Button(self.master, text="Modify", command=self.modify_window) 
+        self.modify_button = Button(self.master, text="Modificar", command=self.modify_window) 
         self.modify_button.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-        self.delete_button = Button(self.master, text="Delete", command=self.delete_window)
+        self.delete_button = Button(self.master, text="Eliminar", command=self.delete_window)
         self.delete_button.place(relx=0.5, rely=0.7, anchor=CENTER)
 
     def show_window(self) -> None:

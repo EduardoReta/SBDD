@@ -148,7 +148,9 @@ class Libro:
         global list_of_values_to_insert
         self.list_of_values_to_insert = []
 
-        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")               
+        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
+        
+                       
 
 
     def insert_value_query(self):
@@ -175,9 +177,11 @@ class Libro:
                 # self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
                 # self.label1.update()
 
-                if str(self.clean_row_list[self.contador + 1]) in self.null_columns:
+                if self.clean_row_list[self.contador + 1] in self.null_columns:
                     self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]} (valor opcional)")
                     self.label1.update()
+
+                    print(f"Inserte valor de: {self.clean_row_list[self.contador + 1]} (valor opcional)")
 
                 else:
                     self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
@@ -239,10 +243,10 @@ class Libro:
                 # self.cursor.execute(f"INSERT INTO tblLIBRO ({str(self.list_of_column_to_insert_value[0])}, {str(self.list_of_column_to_insert_value[1])}, {str(self.list_of_column_to_insert_value[2])}, {str(self.list_of_column_to_insert_value[3])}, {str(self.list_of_column_to_insert_value[4])}, {str(self.list_of_column_to_insert_value[5])}, {str(self.list_of_column_to_insert_value[6])}, {str(self.list_of_column_to_insert_value[7])}, {str(self.list_of_column_to_insert_value[8])}, {str(self.list_of_column_to_insert_value[9])}, {str(self.list_of_column_to_insert_value[10])}, {str(self.list_of_column_to_insert_value[11])}, {str(self.list_of_column_to_insert_value[12])}, {str(self.list_of_column_to_insert_value[13])}) VALUES ({self.list_of_values_to_insert[0]}, '{str(self.list_of_values_to_insert[1])}', {self.list_of_values_to_insert[2]}, {self.list_of_values_to_insert[3]}, {self.list_of_values_to_insert[4]}, {self.list_of_values_to_insert[5]}, {self.list_of_values_to_insert[6]}, {self.list_of_values_to_insert[7]}, {self.list_of_values_to_insert[8]}, {self.list_of_values_to_insert[9]}, {self.list_of_values_to_insert[10]}, {self.list_of_values_to_insert[11]}, {self.list_of_values_to_insert[12]}, {self.list_of_values_to_insert[13]})")
                 # self.cursor.commit()
 
-                self.cursor.execute(f"INSERT INTO tblLIBRO ( ID_LIBRO, TITULO, ID_EDITORIAL, PUBLICACION, ID_ADQUISICION, ID_GENERO, NUM_PAGINAS, EDICION, VOLUMEN, TOMO, ID_IDIOMA, ID_ESTANTE, ID_TIPOLIBRO) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", (self.list_of_values_to_insert[0], self.list_of_values_to_insert[1], self.list_of_values_to_insert[2], self.list_of_values_to_insert[3], self.list_of_values_to_insert[4], self.list_of_values_to_insert[5], self.list_of_values_to_insert[6], self.list_of_values_to_insert[7], self.list_of_values_to_insert[8], self.list_of_values_to_insert[9], self.list_of_values_to_insert[10], self.list_of_values_to_insert[11], self.list_of_values_to_insert[12]))
+                self.cursor.execute(f"INSERT INTO tblLIBRO ( ID_LIBRO, TITULO, ID_AUTOR, ID_EDITORIAL, PUBLICACION, ID_ADQUISICION, ID_GENERO, NUM_PAGINAS, EDICION, VOLUMEN, TOMO, ID_IDIOMA, ID_ESTANTE, ID_TIPOLIBRO) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", (self.list_of_values_to_insert[0], self.list_of_values_to_insert[1], self.list_of_values_to_insert[2], self.list_of_values_to_insert[3], self.list_of_values_to_insert[4], self.list_of_values_to_insert[5], self.list_of_values_to_insert[6], self.list_of_values_to_insert[7], self.list_of_values_to_insert[8], self.list_of_values_to_insert[9], self.list_of_values_to_insert[10], self.list_of_values_to_insert[11], self.list_of_values_to_insert[12], self.list_of_values_to_insert[13]))
                 self.cursor.commit()
 
-                print(f"INSERT INTO tblLIBRO ( ID_LIBRO, TITULO, ID_EDITORIAL, PUBLICACION, ID_ADQUISICION, ID_GENERO, NUM_PAGINAS, EDICION, VOLUMEN, TOMO, ID_IDIOMA, ID_ESTANTE, ID_TIPOLIBRO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (self.list_of_values_to_insert[0], self.list_of_values_to_insert[1], self.list_of_values_to_insert[2], self.list_of_values_to_insert[3], self.list_of_values_to_insert[4], self.list_of_values_to_insert[5], self.list_of_values_to_insert[6], self.list_of_values_to_insert[7], self.list_of_values_to_insert[8], self.list_of_values_to_insert[9], self.list_of_values_to_insert[10], self.list_of_values_to_insert[11], self.list_of_values_to_insert[12] ))
+                print(f"INSERT INTO tblLIBRO ( ID_LIBRO, TITULO, ID_AUTOR, ID_EDITORIAL, PUBLICACION, ID_ADQUISICION, ID_GENERO, NUM_PAGINAS, EDICION, VOLUMEN, TOMO, ID_IDIOMA, ID_ESTANTE, ID_TIPOLIBRO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (self.list_of_values_to_insert[0], self.list_of_values_to_insert[1], self.list_of_values_to_insert[2], self.list_of_values_to_insert[3], self.list_of_values_to_insert[4], self.list_of_values_to_insert[5], self.list_of_values_to_insert[6], self.list_of_values_to_insert[7], self.list_of_values_to_insert[8], self.list_of_values_to_insert[9], self.list_of_values_to_insert[10], self.list_of_values_to_insert[11], self.list_of_values_to_insert[12], self.list_of_values_to_insert[13]))
 
 
                 # Cuando se inserte el registro de autor, actualizamos el contenido en la misma ventana.
@@ -276,8 +280,8 @@ class Libro:
                 self.insert_value.delete(0, 'end')
 
         except Exception:
-            messagebox.showinfo(message=f"Valor no valido")
-            # print(traceback.format_exc())
+            # messagebox.showinfo(message=f"Valor no valido")
+            print(traceback.format_exc())
             self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
             self.label1.update()
 
@@ -291,13 +295,17 @@ class Libro:
 
     # Insertar "DEFAULT" como valor para dar valor nulo a columna dada 
     def null_value(self):
+
+        
+
+
         self.list_of_column_to_insert_value.append(self.clean_row_list[self.contador] )
         # print("entro")
         self.list_of_values_to_insert.append(None)
 
 
 
-        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1]}")
+        self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[self.contador + 1] } (valor opcional)")
         self.label1.update()
 
         self.number_of_column_to_insert += 1
@@ -846,13 +854,12 @@ class Devolucion:
         if self.row_to_list != []:
             for item in self.row_to_list:
                 self.id_prestamo_list.append(int(item[0]))
-
         try:
 
             # ID_PRESTAMO -> self.value_to_table.get()
             # NOTE: FECHA
-            self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
-            # self.date_at_devolution = "2021-06-01"
+            # self.date_at_devolution = datetime.today().strftime('%Y-%m-%d')
+            self.date_at_devolution = "2021-06-03"
             self.cursor.execute(f"UPDATE tblDEVOLUCION SET ESTADO='ENTREGADO' WHERE ID_PRESTAMO={self.value_to_table.get()}")  
             self.cursor.commit()
 
@@ -1076,7 +1083,7 @@ class Multas:
                         except Exception as e:
                             print(str(e))
 
-                self.cursor.execute(f"UPDATE tblMULTA SET ESTADO='ENTREGADO' WHERE ID_MULTA={self.value_to_table.get()}")
+                self.cursor.execute(f"UPDATE tblMULTA SET ESTADO='PAGADO' WHERE ID_MULTA={self.value_to_table.get()}")
 
                 self.cursor.commit()
 

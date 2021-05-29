@@ -292,4 +292,4 @@ class Show:
         self.text_box.delete(1.0, END)
         self.text_box.insert(END, "Tablas:\n")
         for item in self.clean_row_list:
-            self.text_box.insert(END, "\t"+item+"\n")
+            self.text_box.insert(END, "\t"+item[3:]+"\n")
