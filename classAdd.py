@@ -280,7 +280,7 @@ class Libro:
                 self.insert_value.delete(0, 'end')
 
         except Exception:
-            # messagebox.showinfo(message=f"Valor no valido")
+            messagebox.showinfo(message=f"Valor no valido")
             print(traceback.format_exc())
             self.label1.configure(text=f"Inserte valor de: {self.clean_row_list[1]}")
             self.label1.update()
